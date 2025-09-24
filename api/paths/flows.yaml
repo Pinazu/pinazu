@@ -1,0 +1,172 @@
+/v1/flows:
+  get:
+    tags:
+      - flows
+    summary: List all flows
+    description: Returns a list of all flows
+    operationId: listFlows
+    parameters:
+      - $ref: "#/components/parameters/perPageParam"
+      - $ref: "#/components/parameters/pageParam"
+    responses:
+      "200":
+        description: A list of flows
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlowList"
+  post:
+    tags:
+      - flows
+    summary: Create a new flow
+    description: Creates a new flow
+    operationId: createFlow
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateFlowRequest"
+    responses:
+      "201":
+        description: Flow created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flow"
+      "400":
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"
+
+/v1/flows/{flow_id}:
+  parameters:
+    - name: flow_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - flows
+    summary: Get flow by ID
+    description: Returns a specific flow by ID
+    operationId: getFlow
+    responses:
+      "200":
+        description: Flow details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flow"
+      "404":
+        description: Flow not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"
+  put:
+    tags:
+      - flows
+    summary: Update an existing flow
+    description: Updates an existing flow
+    operationId: updateFlow
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateFlowRequest"
+    responses:
+      "200":
+        description: Flow updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flow"
+      "404":
+        description: Flow not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"
+  delete:
+    tags:
+      - flows
+    summary: Delete a flow
+    description: Deletes a specific flow by ID
+    operationId: deleteFlow
+    responses:
+      "204":
+        description: Flow deleted successfully
+      "404":
+        description: Flow not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"
+
+/v1/flows/{flow_id}/execute:
+  parameters:
+    - name: flow_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  post:
+    tags:
+      - flows
+    summary: Execute a flow
+    description: Executes a flow with the provided parameters
+    operationId: executeFlow
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ExecuteFlowRequest"
+    responses:
+      "200":
+        description: Flow executed successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlowRun"
+      "404":
+        description: Flow not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"
+
+/v1/flows/{flow_run_id}/status:
+  parameters:
+    - name: flow_run_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - flows
+    summary: Get flow run by ID
+    description: Returns a specific flow run by ID
+    operationId: getFlowRun
+    responses:
+      "200":
+        description: Flow run details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlowRun"
+      "404":
+        description: Flow run not found
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotFound"

@@ -1,0 +1,26 @@
+events:
+  - name: AgentInvoke
+    type: consumer
+    description: Event message to invoke an agent with messages. Sent by API or other services, consumed by agent handlers.
+    subject: v1.svc.agent.invoke
+    messageFields:
+      - name: AgentId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: Messages
+        type: "[]db.JsonRaw"
+        import: "github.com/pinazu/core/internal/db"
+        description: Array of JSON-encoded messages for the task
+      - name: RecipientId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+    customValidation: |
+      if msg.AgentId == uuid.Nil {
+        return fmt.Errorf("agent_id field is required")
+      }
+      if len(msg.Messages) < 1 {
+        return fmt.Errorf("messages field is required")
+      }
+      if msg.RecipientId == uuid.Nil {
+        return fmt.Errorf("recipient_id field is required")
+      }

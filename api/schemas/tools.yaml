@@ -1,0 +1,207 @@
+Tool:
+  type: object
+  x-go-type: db.Tool
+  x-go-type-import:
+    path: github.com/pinazu/core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_by:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    config:
+      type: object
+      description: JSON configuration for the tool
+      oneOf:
+        - $ref: '#/components/schemas/StandaloneTool'
+        - $ref: '#/components/schemas/WorkflowTool'
+        - $ref: '#/components/schemas/MCPTool'
+  required:
+    - id
+    - name
+    - config
+    - created_by
+    - created_at
+    - updated_at
+
+StandaloneTool:
+  type: object
+  properties:
+    type:
+      type: string
+      enum: ['standalone']
+      x-go-type: db.ToolType
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    params:
+      type: object
+      description: JSON request structure for the tool
+      x-go-type: openapi3.Schema
+      x-go-type-import:
+        path: github.com/getkin/kin-openapi/openapi3
+    url:
+      type: string
+      description: URL path to the server
+      maxLength: 255
+      pattern: '^https?://([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(:[0-9]+)?(/.*)?$'
+    api_key:
+      type: string
+      description: Optional API KEY for the tool server
+  required:
+    - type
+    - params
+    - url
+
+WorkflowTool:
+  type: object
+  properties:
+    type:
+      type: string
+      enum: ['workflow']
+      x-go-type: db.ToolType
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    params:
+      type: object
+      description: JSON request structure for the tool
+      x-go-type: openapi3.Schema
+      x-go-type-import:
+        path: github.com/getkin/kin-openapi/openapi3
+    s3_url:
+      type: string
+      description: S3 or HTTP/HTTPS URL path to the workflow
+      maxLength: 255
+      pattern: '^(s3://[a-zA-Z0-9._-]+|https?://[a-zA-Z0-9._-]+(:[0-9]+)?)(/.*)?$'
+  required:
+    - type
+    - params
+    - s3_url
+
+MCPTool:
+  type: object
+  properties:
+    type:
+      type: string
+      enum: ['mcp']
+      x-go-type: db.ToolType
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    entrypoint:
+      type: string
+      description: MCP entry point for the tool
+      maxLength: 255
+    protocol:
+      type: string
+      description: Protocol used by the MCP tool
+      enum: ['stdio','grpc', 'sse']
+      x-go-type: db.MCPProtocol
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    env_vars:
+      type: object
+      description: Environment variables for the MCP tool
+      additionalProperties:
+        type: string
+      nullable: true
+    api_key:
+      type: string
+      description: Optional API key for the MCP tool
+      nullable: true
+  required:
+    - type
+    - entrypoint
+    - protocol
+
+CreateToolRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    config:
+      type: object
+      x-go-type: db.ToolConfig
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+      oneOf:
+        - $ref: '#/components/schemas/StandaloneTool'
+        - $ref: '#/components/schemas/WorkflowTool'
+        - $ref: '#/components/schemas/MCPTool'
+  required:
+    - name
+    - description
+    - config
+
+UpdateToolRequest:
+  type: object
+  properties:
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    config:
+      type: object
+      x-go-type: db.ToolConfig
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+      oneOf:
+        - $ref: '#/components/schemas/StandaloneTool'
+        - $ref: '#/components/schemas/WorkflowTool'
+        - $ref: '#/components/schemas/MCPTool'
+
+
+ToolList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tool'
+      required:
+        - tools

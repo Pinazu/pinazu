@@ -1,0 +1,25 @@
+from pydantic import BaseModel
+from uuid import UUID
+from datetime import datetime
+from typing import Optional
+
+{{ range $key, $value := .Schemas -}}
+{{ if $value.Value.Type.Includes "object" }}
+class {{ $key }}(BaseModel):
+    {{- if $value.Value.Properties }}
+    {{ range $field, $type := $value.Value.Properties -}}
+    {{ $field }}: {{ toPythonTypeWithOptional $type $field $value.Value.Required $type.Value.Nullable }}
+    {{ end -}}
+    {{- else if $value.Value.AllOf }}
+    {{- /* Handle allOf composition by extracting properties from all schemas */ -}}
+    {{- range $allOfSchema := $value.Value.AllOf -}}
+        {{- if $allOfSchema.Value.Properties -}}
+            {{- range $field, $type := $allOfSchema.Value.Properties }}
+    {{ $field }}: {{ toPythonTypeWithOptional $type $field $allOfSchema.Value.Required $type.Value.Nullable }}
+            {{- end }}
+        {{- end -}}
+{{- end -}}
+    {{- else }}
+    pass
+{{- end }}
+{{ end }}{{ end -}}

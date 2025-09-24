@@ -1,0 +1,208 @@
+/v1/agents:
+  get:
+    tags:
+      - agents
+    summary: List all agents
+    description: Returns a list of all available AI agents
+    operationId: listAgents
+    responses:
+      '200':
+        description: A list of agents
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentList'
+  post:
+    tags:
+      - agents
+    summary: Create a new agent
+    description: Creates a new AI agent
+    operationId: createAgent
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAgentRequest'
+    responses:
+      '201':
+        description: Agent created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/agents/{agent_id}:
+  parameters:
+    - name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - agents
+    summary: Get agent by ID
+    description: Returns a specific agent by ID
+    operationId: getAgent
+    responses:
+      '200':
+        description: Agent details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+      '404':
+        description: Agent not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  put:
+    tags:
+      - agents
+    summary: Update agent
+    description: Updates an existing agent
+    operationId: updateAgent
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateAgentRequest'
+    responses:
+      '200':
+        description: Agent updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+      '404':
+        description: Agent not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  delete:
+    tags:
+      - agents
+    summary: Delete agent
+    description: Deletes an agent
+    operationId: deleteAgent
+    responses:
+      '204':
+        description: Agent deleted successfully
+      '404':
+        description: Agent not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+
+/v1/agents/{agent_id}/permissions:
+  parameters:
+    - name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - agents
+    summary: List permissions for agent mapping
+    description: Returns a list of permissions for an agent
+    operationId: listPermissionsForAgent
+    responses:
+      '200':
+        description: A list of permissions for the agent
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPermissionMappingList'
+      '404':
+        description: Agent not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  post:
+    tags:
+      - agents
+    summary: Add permission to agent
+    description: Adds a permission to an agent
+    operationId: addPermissionToAgent
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddPermissionToAgentRequest'
+    responses:
+      '201':
+        description: Permission added successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPermissionMapping'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+      '404':
+        description: Agent or Permission not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+      '409':
+        description: Permission already exists in agent
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceAlreadyExists'
+
+/v1/agents/{agent_id}/permissions/{permission_id}:
+  parameters:
+    - name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    - name: permission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  delete:
+    tags:
+      - agents
+    summary: Remove permission from agent
+    description: Removes a permission from a agent
+    operationId: removePermissionFromAgent
+    responses:
+      '204':
+        description: Permission removed successfully
+      '404':
+        description: Agent or Permission not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'

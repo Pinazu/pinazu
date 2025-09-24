@@ -1,0 +1,277 @@
+Flow:
+  type: object
+  x-go-type: db.Flow
+  x-go-type-import:
+    path: github.com/pinazu/core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the flow
+    name:
+      type: string
+      description: Name of the flow
+    description:
+      type: string
+      nullable: true
+      description: Description of the flow
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    engine:
+      type: string
+      description: The engine used for the flow
+    additional_info:
+      type: object
+      additionalProperties: true
+      nullable: true
+      description: Additional information related to the flow
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    tags:
+      type: array
+      items:
+        type: string
+      description: Tags associated with the flow
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when the flow was created
+    updated_at:
+      type: string
+      format: date-time
+      description: Timestamp when the flow was last updated
+    parameters_schema:
+      type: object
+      additionalProperties: true
+      description: Schema for the parameters of the flow
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    code_location:
+      type: string
+      nullable: true
+      description: Location of the code for the flow
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    entrypoint:
+      type: string
+      nullable: true
+      description: Entrypoint for the flow
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - id
+    - name
+    - engine
+    - tags
+    - created_at
+    - updated_at
+    - parameters_schema
+  
+FlowRun:
+  type: object
+  x-go-type: db.FlowRun
+  x-go-type-import:
+    path: github.com/pinazu/core/internal/db
+    name: db
+  properties:
+    flow_run_id:
+      type: string
+      format: uuid
+      description: Unique identifier for the flow run
+    flow_id:
+      type: string
+      format: uuid
+      description: ID of the flow associated with this run
+    parameters:
+      type: object
+      additionalProperties: true
+      description: Parameters used for the flow run
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    status:
+      type: string
+      enum:
+        - SCHEDULED
+        - PENDING
+        - RUNNING
+        - SUCCESS
+        - FAILED
+    engine:
+      type: string
+      description: The engine used for the flow run
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when the flow run was created
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      description: Timestamp when the flow run was last updated
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    started_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp when the flow run started
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    finished_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp when the flow run finished
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    task_statuses:
+      type: object
+      additionalProperties: true
+      description: Status of tasks within the flow run
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    success_task_results:
+      type: object
+      additionalProperties: true
+      description: Results of successful tasks in the flow run
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: github.com/pinazu/core/internal/db
+        name: db
+    error_message:
+      type: string
+      nullable: true
+      description: Error message if the flow run failed
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    retry_count:
+      type: integer
+      nullable: true
+      description: Current retry count for the flow run
+      x-go-type: pgtype.Int4
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    max_retries:
+      type: integer
+      nullable: true
+      description: Maximum number of retries for the flow run
+      x-go-type: pgtype.Int4
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - flow_run_id
+    - flow_id
+    - parameters
+    - status
+    - engine
+    - created_at
+    - updated_at
+    - task_statuses
+    - success_task_results
+
+CreateFlowRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      description: Name of the flow
+    description:
+      type: string
+      description: Description of the flow
+    engine:
+      type: string
+      description: The engine used for the flow
+    additional_info:
+      type: object
+      additionalProperties: true
+      description: Additional information related to the flow
+    tags:
+      type: array
+      items:
+        type: string
+      description: Tags associated with the flow
+    parameters_schema:
+      type: object
+      additionalProperties: true
+      description: Schema for the parameters of the flow
+    code_location:
+      type: string
+      description: Location of the code for the flow
+    entrypoint:
+      type: string
+      description: Entrypoint for the flow
+  required:
+    - name
+    - engine
+    - parameters_schema
+    - code_location
+    - entrypoint
+
+UpdateFlowRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      description: Name of the flow
+    description:
+      type: string
+      description: Description of the flow
+    engine:
+      type: string
+      description: The engine used for the flow
+    additional_info:
+      type: object
+      additionalProperties: true
+      description: Additional information related to the flow
+    tags:
+      type: array
+      items:
+        type: string
+      description: Tags associated with the flow
+    code_location:
+      type: string
+      description: Location of the code for the flow
+    entrypoint:
+      type: string
+      description: Entrypoint for the flow
+
+ExecuteFlowRequest:
+  type: object
+  properties:
+    parameters:
+      type: object
+      additionalProperties: true
+      description: Parameters for the flow execution
+  required:
+    - parameters
+
+FlowList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        flows:
+          type: array
+          items:
+            $ref: '#/components/schemas/Flow'
+      required:
+        - flows

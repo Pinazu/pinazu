@@ -1,0 +1,113 @@
+/v1/threads:
+  get:
+    tags:
+      - threads
+    summary: List all threads
+    description: Returns a list of all available threads
+    operationId: listThreads
+    responses:
+      '200':
+        description: A list of threads
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreadList'
+  post:
+    tags:
+      - threads
+    summary: Create a new thread
+    description: Creates a new thread
+    operationId: createThread
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateThreadRequest'
+    responses:
+      '201':
+        description: Thread created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Thread'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/threads/{thread_id}:
+  parameters:
+    - name: thread_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - threads
+    summary: Get thread by ID
+    description: Returns a specific thread by ID
+    operationId: getThread
+    responses:
+      '200':
+        description: Thread details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Thread'
+      '404':
+        description: Thread not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  put:
+    tags:
+      - threads
+    summary: Update thread title
+    description: Updates the title of an existing thread
+    operationId: updateThreadTitle
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateThreadRequest'
+    responses:
+      '200':
+        description: Thread updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Thread'
+      '404':
+        description: Thread not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+  delete:
+    tags:
+      - threads
+    summary: Delete thread
+    description: Deletes a thread
+    operationId: deleteThread
+    responses:
+      '204':
+        description: Thread deleted successfully
+      '404':
+        description: Thread not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'

@@ -1,0 +1,107 @@
+/v1/tools:
+  get:
+    tags:
+      - tools
+    summary: List all tools
+    description: Retrieve a list of all available tools
+    operationId: listTools
+    responses:
+      '200':
+        description: A list of tools
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolList'
+  post:
+    tags:
+      - tools
+    summary: Create a new tool
+    description: Create a new tool with the provided details
+    operationId: createTool
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateToolRequest'
+    responses:
+      '201':
+        description: Tool created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tool'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/tools/{tool_id}:
+  parameters:
+    - name: tool_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - tools
+    summary: Get a tool by ID
+    description: Retrieve a specific tool by its ID
+    operationId: getToolById
+    responses:
+      '200':
+        description: Tool details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tool'
+      '404':
+        description: Tool not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  put:
+    tags:
+      - tools
+    summary: Update a tool
+    description: Update an existing tool with new details
+    operationId: updateTool
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateToolRequest'
+    responses:
+      '200':
+        description: Tool updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tool'
+      '404':
+        description: Tool not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  delete:
+    tags:
+      - tools
+    summary: Delete a tool
+    description: Delete a specific tool by its ID
+    operationId: deleteTool
+    responses:
+      '204':
+        description: Tool deleted successfully
+      '404':
+        description: Tool not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
