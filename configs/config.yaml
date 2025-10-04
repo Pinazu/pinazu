@@ -1,0 +1,60 @@
+environment: development
+
+http:
+  port: 8080
+
+debug: true
+
+nats:
+  url: "nats://localhost:4222"
+  jetstream_default_config:
+    max_msgs: 1000000        # 1 million messages
+    max_bytes: 1073741824    # 1GB in bytes
+    max_age_seconds: 86400   # 24 hours (86400 seconds)
+    replicas: 1              # Single replica
+    max_deliver: 3           # Maximum delivery attempts for consumers
+
+database:
+  host: localhost
+  port: 5432
+  user: admin
+  password: password
+  dbname: postgres
+
+tracing:
+  service_name: pinazu-core
+  exporter_endpoint: localhost:4317
+  exporter_insecure: true
+  sampling_ratio: 1.0
+
+scheduler:
+  enable_retries: true
+  max_retries: 3
+  retry_backoff_seconds: 5
+  enable_dead_lettering: true
+  dead_letter_topic: scheduler.dead_letter
+  batch_size: 10
+  batch_timeout_seconds: 5
+
+storage:
+  s3:
+    endpoint_url: "http://localhost:9000"  # MinIO endpoint, leave empty for AWS S3
+    access_key_id: minioadmin
+    secret_access_key: minioadmin
+    region: us-east-1
+    use_path_style: true  # true for MinIO/custom endpoints, false for AWS S3
+    credential_type: static  # "static", "assume_role", or "default"
+    # assume_role_arn: "arn:aws:iam::123456789012:role/S3AccessRole"  # For assume role
+    # assume_role_session: "pinazu-worker-session"  # Optional session name
+
+cache:
+  type: s3
+  bucket: flow-cache-bucket
+
+llm_config:
+  bedrock:
+    type: assume_role
+    region: ap-southeast-1
+    assume_role: "arn:aws:iam::130506138320:role/bedrock-cross-account-role"
+  google:
+    api_key: AIzaSyDHPIi7IQhrN4Y9W3PizbZLegwOWfPYyB0

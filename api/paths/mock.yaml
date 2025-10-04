@@ -1,0 +1,53 @@
+/v1/mock/tool:
+  post:
+    tags:
+      - mock
+    summary: Mock standalone server
+    description: Return a mock response
+    operationId: mockStandaloneTool
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MockToolRequest'
+    responses:
+      '200':
+        description: Mock request execute successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MockToolResponse'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/mock/tool_with_delay:
+  post:
+    tags:
+      - mock
+    summary: Mock standalone server with delay
+    description: Return a mock response
+    operationId: mockStandaloneToolWithDelay
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MockToolWithDelayRequest'
+    responses:
+      '200':
+        description: Mock request execute successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MockToolWithDelayResponse'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'

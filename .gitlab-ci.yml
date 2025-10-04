@@ -1,0 +1,109 @@
+
+
+stages:
+  - check
+  - test
+  - build
+  - deploy
+
+Dummy Manual:
+  stage: check
+  when: manual
+  script: |
+    echo "help me"
+
+include:
+  - local: .pipelines/build-python.yml
+
+SonarQube SAST:
+  stage: test
+  image: 
+    name: 271540607717.dkr.ecr.ap-southeast-1.amazonaws.com/secure-vl-base/sonar-scanner-cli:7.2.0.5079-r1
+    entrypoint: [""]
+  
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    KUBERNETES_NODE_SELECTOR_ARCH: kubernetes.io/arch=amd64 # Ensure the scanner runs on the correct architecture
+
+  cache:
+    policy: pull-push
+    key: "sonar-cache-$CI_COMMIT_REF_SLUG"
+    paths:
+      - "${SONAR_USER_HOME}/cache"
+      - sonar-scanner/
+      
+  script: 
+    - sonar-scanner-cli -Dsonar.host.url="${SONAR_HOST_URL}"
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == 'main'
+
+Run Unit Test:
+  stage: test
+  trigger:
+    include:
+      - local: .pipelines/unittest.yml
+    strategy: depend
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - .pipelines/build-docker.yml
+          - .pipelines/unittest.yml
+          - cmd/**
+          - internal/**/*
+          - sql/migrations/**
+          - sql/queries/**
+          - web/**/*
+          - go.mod
+          - go.sum
+        compare_to: $CI_DEFAULT_BRANCH
+      
+
+Build Docker:
+  stage: build
+  trigger:
+    include:
+      - local: .pipelines/build-docker.yml
+    strategy: depend
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .pipelines/build-docker.yml
+        - cmd/**
+        - internal/**/*
+        - sql/migrations/**
+        - sql/queries/**
+        - web/**/*
+        - go.mod
+        - go.sum
+        - Dockerfile
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - .pipelines/build-docker.yml
+          - internal/**/*
+          - sql/migrations/**
+          - sql/queries/**
+          - web/**/*
+          - go.mod
+          - go.sum
+          - Dockerfile
+        compare_to: $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
+    - when: never # Skip if not in filters, show as skipped pipeline
+
+# trigger_deploy_infra:
+#   stage: deploy
+#   trigger:
+#     project: ${TERRAFORM_PROJECT}
+#     strategy: depend
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#       changes:
+#         - deploy/terraform/**/*
+#       when: always
+#       variables:
+#         TERRAFORM_PROJECT: "devops/iac/sandbox-accounts"

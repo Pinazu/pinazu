@@ -1,0 +1,138 @@
+/v1/threads/{thread_id}/messages:
+  parameters:
+    - name: thread_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - messages
+    summary: List all messages in a thread
+    description: Returns a list of all messages in a specific
+    operationId: listMessages
+    responses:
+      '200':
+        description: A list of messages
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageList'
+      '404':
+        description: Thread for messages not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  post:
+    tags:
+      - messages
+    summary: Create a new message in a thread
+    description: Creates a new message in a specific thread
+    operationId: createMessage
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateMessageRequest'
+    responses:
+      '201':
+        description: Message created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      '404':
+        description: Thread for messages not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/threads/{thread_id}/messages/{message_id}:
+  parameters:
+    - name: thread_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    - name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - messages
+    summary: Get message by ID
+    description: Returns a specific message by ID
+    operationId: getMessage
+    responses:
+      '200':
+        description: Message details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      '404':
+        description: Message not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  put:
+    tags:
+      - messages
+    summary: Update message
+    description: Updates an existing message
+    operationId: updateMessage
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateMessageRequest'
+    responses:
+      '200':
+        description: Message updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+      '404':
+        description: Message not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  delete:
+    tags:
+      - messages
+    summary: Delete message
+    description: Deletes a message
+    operationId: deleteMessage
+    responses:
+      '204':
+        description: Message deleted successfully
+      '404':
+        description: Message not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'

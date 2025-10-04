@@ -1,0 +1,59 @@
+version: "2"
+sql:
+  - schema: "sql/migrations" 
+    queries: "sql/queries" 
+    engine: "postgresql"
+    gen:
+      go:
+        out: "internal/db"
+        sql_package: "pgx/v5"
+        sql_driver: github.com/jackc/pgx/v5
+        emit_db_tags: true
+        emit_json_tags: true
+        emit_empty_slices: true
+        overrides:
+        - db_type: "uuid"
+          go_type:
+            import: "github.com/google/uuid"
+            type: "UUID"
+        - db_type: "jsonb"
+          go_type:
+            type: "JsonRaw"
+          nullable: true
+        - db_type: "jsonb"
+          go_type:
+            type: "JsonRaw"
+        - column: "tools.type"
+          go_type:
+            type: "ToolType"
+        - column: "users.provider_name"
+          go_type:
+            type: "ProviderName"
+        - column: "thread_messages.sender_type"
+          go_type:
+            type: SenderMessageType
+        - column: "thread_messages.result_type"
+          go_type:
+            type: "*ResultMessageType"
+          nullable: true
+        - column: "tools.config"
+          go_type:
+            type: "ToolConfig"
+        - column: "tools_result.status"
+          go_type:
+            type: "Status"
+        - column: "flow_runs.status"
+          go_type:
+            type: "FlowStatus"
+        - column: "tool_runs.status"
+          go_type:
+            type: "ToolRunStatus"
+        - column: "flow_task_runs.status"
+          go_type:
+            type: "FlowStatus"
+        - column: "worker_heartbeats.status"
+          go_type:
+            type: "WorkerStatus"
+        - column: "tasks_runs.status"
+          go_type:
+            type: "TaskRunStatus"

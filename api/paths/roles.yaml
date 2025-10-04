@@ -1,0 +1,208 @@
+/v1/roles:
+  get:
+    tags:
+      - roles
+    summary: List all roles
+    description: Returns a list of all roles
+    operationId: listRoles
+    responses:
+      '200':
+        description: A list of roles
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleList'
+  post:
+    tags:
+      - roles
+    summary: Create a new role
+    description: Creates a new role
+    operationId: createRole
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateRoleRequest'
+    responses:
+      '201':
+        description: Role created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+
+/v1/roles/{role_id}:
+  parameters:
+    - name: role_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - roles
+    summary: Get role by ID
+    description: Returns a specific role by ID
+    operationId: getRole
+    responses:
+      '200':
+        description: Role details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      '404':
+        description: Role not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  put:
+    tags:
+      - roles
+    summary: Update role
+    description: Updates an existing role
+    operationId: updateRole
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateRoleRequest'
+    responses:
+      '200':
+        description: Role updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+      '404':
+        description: Role not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  delete:
+    tags:
+      - roles
+    summary: Delete role
+    description: Deletes a role
+    operationId: deleteRole
+    responses:
+      '204':
+        description: Role deleted successfully
+      '404':
+        description: Role not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+
+/v1/roles/{role_id}/permissions:
+  parameters:
+    - name: role_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - roles
+    summary: List permissions for role mapping
+    description: Returns a list of permissions for a role
+    operationId: listPermissionsForRole
+    responses:
+      '200':
+        description: A list of permissions for the role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolePermissionMappingList'
+      '404':
+        description: Role not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+  post:
+    tags:
+      - roles
+    summary: Add permission to role
+    description: Adds a permission to a role
+    operationId: addPermissionToRole
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddPermissionToRoleRequest'
+    responses:
+      '201':
+        description: Permission added successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolePermissionMapping'
+      '400':
+        description: Invalid parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadRequest'
+      '404':
+        description: Role or Permission not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'
+      '409':
+        description: Permission already exists in role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceAlreadyExists'
+
+/v1/roles/{role_id}/permissions/{permission_id}:
+  parameters:
+    - name: role_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    - name: permission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  delete:
+    tags:
+      - roles
+    summary: Remove permission from role
+    description: Removes a permission from a role
+    operationId: removePermissionFromRole
+    responses:
+      '204':
+        description: Permission removed successfully
+      '404':
+        description: Role or Permission not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotFound'

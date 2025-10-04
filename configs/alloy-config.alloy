@@ -1,0 +1,35 @@
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+// Collect traces from otlp gRPC endpoint
+otelcol.receiver.otlp "oltp" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces  = [otelcol.processor.batch.otlp.input]
+  }
+}
+
+otelcol.processor.batch "otlp" {
+  output {
+    traces  = [otelcol.exporter.otlphttp.tempo.input]
+  }
+}
+
+
+otelcol.exporter.otlphttp "tempo" {
+  client {
+    endpoint = "https://traces.prod.kalliopedata.io"
+    headers = {
+      "X-Scope-OrgID" = "sandbox-local",
+    }
+  }
+}

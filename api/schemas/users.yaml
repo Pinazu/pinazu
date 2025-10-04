@@ -1,0 +1,198 @@
+User:
+  type: object
+  x-go-type: db.GetUsersRow
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    name:
+      type: string
+      maxLength: 255
+    email:
+      type: string
+      format: email
+      maxLength: 255
+    additional_info:
+      type: object
+      description: Additional user information in JSON format
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    provider_name:
+      type: string
+      description: Authentication provider (local, google, etc.)
+      x-go-type: db.ProviderName
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    is_online:
+      type: boolean
+      nullable: true
+      x-go-type: pgtype.Bool
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    last_login:
+      type: string
+      format: date-time
+      nullable: true
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - id
+    - name
+    - email
+    - created_at
+    - updated_at
+
+CreateUserRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    email:
+      type: string
+      format: email
+      maxLength: 255
+    additional_info:
+      type: object
+      description: Additional user information in JSON format
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    password_hash:
+      type: string
+      description: Securely hashed password
+    provider_name:
+      type: string
+      description: Authentication provider (local, google, etc.)
+      x-go-type: db.ProviderName
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+  required:
+    - name
+    - email
+    - password_hash
+
+UpdateUserRequest:
+  type: object
+  properties:
+    username:
+      type: string
+      maxLength: 255
+    email:
+      type: string
+      format: email
+      maxLength: 255
+    additional_info:
+      type: object
+      description: Additional user information in JSON format
+    provider_name:
+      type: string
+      description: Authentication provider (local, google, etc.)
+      x-go-type: db.ProviderName
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+
+UserList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      required:
+        - users
+
+AddRoleToUserRequest:
+  type: object
+  properties:
+    role_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    assigned_by:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - role_id
+
+UserRoleMapping:
+  type: object
+  x-go-type: db.UserRoleMapping
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    mapping_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    user_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    role_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    assigned_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    assigned_by:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - mapping_id
+    - user_id
+    - role_id
+    - assigned_at
+    - assigned_by
+
+UserRoleMappingList:
+  type: array
+  items:
+    $ref: '#/components/schemas/UserRoleMapping'

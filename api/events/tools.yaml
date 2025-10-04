@@ -1,0 +1,101 @@
+events:
+  - name: ToolDispatch
+    type: consumer
+    description: Contain the tool request. Sent by agents processes, consumed by tools handler.
+    subject: v1.svc.tool.dispatch
+    messageFields:
+      - name: AgentId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: Provider
+        type: db.ProviderModel
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        description: The provider name that the agent is calling from. This will use to parse the message structure based on the provider name
+      - name: RecipientId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: Message
+        type: db.JsonRaw
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+    customValidation: |
+      if msg.AgentId == uuid.Nil {
+        return fmt.Errorf("agent_id is required")
+      }
+      if msg.Provider == db.ProviderModelNil {
+        return fmt.Errorf("provider is required")
+      }
+      if msg.RecipientId == uuid.Nil {
+        return fmt.Errorf("recipient_id is required")
+      }
+      if msg.Message == nil {
+        return fmt.Errorf("message is required")
+      }
+  
+  - name: ToolGather
+    type: consumer
+    description: Event message to gather tool results. Sent by tools handler, consumed by agents.
+    subject: v1.svc.tool.gather
+    messageFields:
+      - name: ToolRunId
+        type: string
+      - name: Content
+        type: db.JsonRaw
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+      - name: ResultType
+        type: db.ResultMessageType
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        description: Type of the tool result
+      - name: IsError
+        type: bool
+        description: Whether the tool execution resulted in an error
+    customValidation: |
+      if msg.ToolRunId == "" {
+        return fmt.Errorf("tool_run_id field is required")
+      }
+      if msg.Content == nil {
+        return fmt.Errorf("content field is required")
+      }
+      if msg.ResultType == "" {
+        return fmt.Errorf("result_type field is required")
+      }
+
+  - name: StandaloneToolRequest
+    type: consumer
+    description: Event message to request a standalone tool execution. Sent by tools handler, consumed by standalone tool servers.
+    subject: v1.svc.tool.standalone.execute
+    messageFields:
+      - name: ToolRunId
+        type: string
+      - name: ToolName
+        type: string
+        description: Name of the tool to execute
+      - name: ToolInput
+        type: map[string]any
+        description: Input parameters for the tool
+      - name: ToolURL
+        description: API URL of the tool service
+        type: string
+      - name: ToolAPIKey
+        description: API Key of the tool service
+        type: "*string"
+    customValidation: |
+      if msg.ToolRunId == "" {
+        return fmt.Errorf("tool_run_id is required")
+      }
+      if msg.ToolName == "" {
+        return fmt.Errorf("tool_name is required")
+      }
+      if msg.ToolInput == nil {
+        return fmt.Errorf("tool_input is required")
+      }
+      if msg.ToolURL == "" {
+        return fmt.Errorf("tool_url is required")
+      }
+
+  - name: MCPToolRequest
+    type: consumer
+    description: Event message to request a mcp tool execution. Sent by tools handler, consumed by mcp tool servers.
+    subject: v1.svc.tool.mcp.execute
+    messageFields: []
+    customValidation: |
+      // No validation needed for cancel event

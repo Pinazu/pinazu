@@ -1,0 +1,143 @@
+events:
+  - name: FlowRunStatus
+    type: consumer
+    description: Contain the status of a flow run. Sent by worker and flow run processes, consumed by orchestrator.
+    subject: v1.svc.worker.flow.status
+    messageFields:
+      - name: FlowRunId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: Status
+        type: db.FlowStatus
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+      - name: EventTimestamp
+        type: time.Time
+        import: "time"
+      - name: ErrorMessage
+        type: string
+        description: Optional error message if the flow run failed
+        optional: true
+    customValidation: |
+      if msg.FlowRunId == uuid.Nil {
+        return fmt.Errorf("flow_run_id is required")
+      }
+      if msg.Status == "" {
+        return fmt.Errorf("status is required")
+      }
+      if msg.EventTimestamp.IsZero() {
+        return fmt.Errorf("event_timestamp is required")
+      }
+
+  - name: FlowTaskRunStatus
+    type: consumer
+    description: Contain the status of a task run. Sent by worker and flow run processes, consumed by orchestrator.
+    subject: v1.svc.worker.task.status
+    messageFields:
+      - name: FlowRunId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: TaskName
+        type: string
+        description: Name of the task that is being executed
+      - name: Status
+        type: db.FlowStatus
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+      - name: ResultCacheKey
+        type: "*string"
+        description: Cache key for the result of the task run, used for retry scenarios
+        optional: true
+      - name: EventTimestamp
+        type: time.Time
+        import: "time"
+      - name: ErrorMessage
+        type: string
+        description: Optional error message if the task run failed
+        optional: true
+    customValidation: |
+      if msg.FlowRunId == uuid.Nil {
+        return fmt.Errorf("task_run_id is required")
+      }
+      if msg.TaskName == "" {
+        return fmt.Errorf("task_name is required")
+      }
+      if msg.Status == "" {
+        return fmt.Errorf("status is required")
+      }
+      if msg.EventTimestamp.IsZero() {
+        return fmt.Errorf("event_timestamp is required")
+      }
+  
+  - name: FlowRunExecute
+    type: consumer
+    description: Event to execute a flow run with parameters. Sent by orchestrator, consumed by worker.
+    subject: v1.svc.worker.flow.execute
+    messageFields:
+      - name: FlowRunId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: Parameters
+        type: map[string]interface{}
+        description: Parameters to pass to the flow run
+        optional: true
+      - name: Engine
+        type: string
+        description: The engine to use for the flow run execution
+      - name: CodeLocation
+        type: string
+        description: Location of the code to execute (local or remote)
+      - name: Entrypoint
+        type: string
+        description: Entrypoint for the code execution (e.g., python)
+      - name: Args
+        type: "[]string"
+        description: Arguments for the entrypoint command
+      - name: SuccessTaskResults
+        type: map[string]string
+        description: Cache keys for successful task results, used for retry scenarios
+      - name: EventTimestamp
+        type: time.Time
+        import: "time"
+    customValidation: |
+      if msg.FlowRunId == uuid.Nil {
+        return fmt.Errorf("flow_run_id is required")
+      }
+      if msg.Engine == "" {
+        return fmt.Errorf("engine is required")
+      }
+      if msg.Engine != "process" {
+        return fmt.Errorf("unsupported engine: %s, only 'process' is supported", msg.Engine)
+      }
+      if msg.Entrypoint == "" {
+        return fmt.Errorf("entrypoint is required")
+      }
+
+  - name: FlowRunExecute
+    type: request_response
+    description: Request to execute a flow run with parameters. Sent by orchestrator, consumed by worker.
+    subject: v1.svc.flowrun.execute
+    messageFields:
+      - name: FlowId
+        type: uuid.UUID
+        import: "github.com/google/uuid"
+      - name: FlowRunId
+        type: "*uuid.UUID"
+        import: "github.com/google/uuid"
+        description: The ID of the flow run to execute. Auto Generate if not provided
+        optional: true
+      - name: Parameters
+        type: map[string]interface{}
+        description: Parameters to pass to the flow run
+      - name: Engine
+        type: string
+        description: The engine to use for the flow run execution
+    customValidation: |
+      if msg.FlowId == uuid.Nil {
+        return fmt.Errorf("flow_id is required")
+      }
+      if msg.Engine == "" {
+        msg.Engine = "process" // Default to process engine if not specified
+      }
+    responseFields:
+      - name: FlowRun 
+        type: db.FlowRun
+        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"

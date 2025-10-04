@@ -1,0 +1,31 @@
+{
+  "name": "pinazu-core-integration-tests",
+  "version": "1.0.0",
+  "description": "Integration tests for Pinazu Core API services",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:integration",
+    "test:integration": "playwright test",
+    "test:integration:ui": "playwright test --ui",
+    "test:integration:debug": "playwright test --debug",
+    "test:flows": "playwright test flows.spec.ts"
+  },
+  "keywords": [
+    "testing",
+    "integration",
+    "playwright",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.2.1",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "nats": "^2.29.3",
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "python.defaultInterpreterPath": "python3",
+    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "go.testEnvFile": "${workspaceFolder}/.env",
+}

@@ -1,0 +1,47 @@
+MockToolRequest:
+  type: object
+  properties:
+    input:
+      type: string
+  required:
+    - input
+
+MockToolResponse:
+  type: object
+  properties:
+    text:
+      type: string
+    citation:
+      type: array
+      items:
+        type: object
+        x-go-type: anthropic.TextCitationParamUnion
+        x-go-type-import:
+          path: "github.com/anthropics/anthropic-sdk-go"
+  required:
+    - text
+    - citation
+
+MockToolWithDelayRequest:
+  type: object
+  properties:
+    input:
+      type: string
+  required:
+    - input
+
+MockToolWithDelayResponse:
+  type: object
+  properties:
+    text:
+      type: string
+    citation:
+      type: array
+      items:
+        type: object
+        x-go-type: anthropic.TextCitationParamUnion
+        x-go-type-import:
+          path: "github.com/anthropics/anthropic-sdk-go"
+  required:
+    - text
+    - citation

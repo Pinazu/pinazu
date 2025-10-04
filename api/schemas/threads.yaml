@@ -1,0 +1,78 @@
+Thread:
+  type: object
+  x-go-type: db.Thread
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    title:
+      type: string
+      maxLength: 255
+    created_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    user_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - id
+    - title
+    - created_at
+    - updated_at
+    - user_id
+
+CreateThreadRequest:
+  type: object
+  properties:
+    title:
+      type: string
+      maxLength: 255
+    user_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - title
+    - user_id
+
+UpdateThreadRequest:
+  type: object
+  properties:
+    title:
+      type: string
+      maxLength: 255
+  required:
+    - title
+
+ThreadList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        threads:
+          type: array
+          items:
+            $ref: '#/components/schemas/Thread'
+      required:
+        - threads

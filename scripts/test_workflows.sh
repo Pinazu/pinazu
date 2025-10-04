@@ -1,0 +1,19 @@
+#!/bin/bash
+nats pub v1.svc.worker.flow.execute '{
+    "header":{
+        "user_id":"550e8400-e29b-41d4-a716-446655440000",
+        "thread_id":"550e8400-e29b-41d4-a716-446655440001",
+        "connection_id":"550e8400-e29b-41d4-a716-446655440002"
+    },
+    "message":{
+        "flow_run_id":"550e8400-e29b-41d4-a716-446655440005",
+        "engine":"process",
+        "code_location":"s3://worker-test-123/example_flow.py",
+        "entrypoint":"python3","args":["-m","example_flow"],
+        "parameters":{"x":5,"y":3},
+        "success_task_results":{},
+        "event_timestamp":"2024-01-01T00:00:00Z"
+    },
+    "metadata":{
+        "trace_id":"trace-123","timestamp":"2024-01-01T00:00:00Z"
+    }}'

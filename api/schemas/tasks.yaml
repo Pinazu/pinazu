@@ -1,0 +1,196 @@
+Task:
+  type: object
+  x-go-type: db.Task
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      description: Unique identifier for the task
+    thread_id:
+      type: string
+      format: uuid
+      description: ID of the thread associated with this task
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    max_request_loop:
+      type: integer
+      description: Maximum number of request loops for the task
+    additional_info:
+      type: object
+      additionalProperties: true
+      description: Additional information related to the task
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    parent_task_id:
+      type: string
+      nullable: true
+      description: ID of the parent task, if this is a subtask
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when the task was created
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_by:
+      type: string
+      format: uuid
+      description: ID of the user who created the task
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    updated_at:
+      type: string
+      format: date-time
+      description: Timestamp when the task was last updated
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - id
+    - thread_id
+    - max_request_loop
+    - additional_info
+    - created_at
+    - created_by
+    - updated_at
+  
+TaskRun:
+  type: object
+  x-go-type: db.TasksRun
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    task_run_id:
+      type: string
+      format: uuid
+      description: Unique identifier for the task run
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    task_id:
+      type: string
+      description: ID of the task associated with this run
+    status:
+      type: string
+      enum:
+        - SCHEDULED
+        - PAUSE
+        - RUNNING
+        - FINISHED
+        - FAILED
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when the task run was created
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    current_loops:
+      type: integer
+      description: Current number of loops executed
+    updated_at:
+      type: string
+      format: date-time
+      description: Timestamp when the task run was last updated
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    started_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp when the task run started
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    finished_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp when the task run finished
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - task_run_id
+    - task_id
+    - status
+    - created_at
+    - updated_at
+
+CreateTaskRequest:
+  type: object
+  properties:
+    thread_id:
+      type: string
+      format: uuid
+      description: ID of the thread associated with this task
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    max_request_loop:
+      type: integer
+      description: Maximum number of request loops for the task
+      default: 20
+    additional_info:
+      type: object
+      additionalProperties: true
+      description: Additional information related to the task
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+  required:
+    - thread_id
+
+UpdateTaskRequest:
+  type: object
+  properties:
+    max_request_loop:
+      type: integer
+      description: Maximum number of request loops for the task
+    additional_info:
+      type: object
+      additionalProperties: true
+      description: Additional information related to the task
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+
+ExecuteTaskRequest:
+  type: object
+  properties:
+    agent_id:
+      type: string
+      format: uuid
+      description: ID of the agent to execute the task
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    current_loops:
+      type: integer
+      description: Starting number of loops for the task execution
+      default: 0
+  required:
+    - agent_id
+
+TaskList:
+  type: object
+  allOf:
+    - $ref: "#/components/schemas/PaginationMeta"
+    - type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+      required:
+        - tasks

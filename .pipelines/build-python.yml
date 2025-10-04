@@ -1,0 +1,48 @@
+
+Build Python:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - .pipelines/build-python.yml
+        - python/**/*
+      variables:
+        PUBLISH_PYTHON_PACKAGES: "true"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - .pipelines/build-python.yml
+          - python/**/*
+        compare_to: $CI_DEFAULT_BRANCH
+      variables:
+        PUBLISH_PYTHON_PACKAGES: "false"
+    - if: $CI_COMMIT_TAG
+      variables:
+        PUBLISH_PYTHON_PACKAGES: "true"
+    
+  image: 271540607717.dkr.ecr.ap-southeast-1.amazonaws.com/secure-vl-base/python:3.12
+  before_script:
+    - echo "Assume role to get AWS credentials"
+    - |
+      echo "Assume role for Production Access"
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+      $(aws sts assume-role \
+      --role-arn arn:aws:iam::271540607717:role/infra-bootstrap-provisioning-role \
+      --role-session-name GitLabRunner \
+      --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+      --output text))
+  script:
+    - echo "Running Python build"
+    - echo "Building Pinazu Python Package"
+    - mkdir -p /tmp/dist
+    - |
+      cd python/pinazu-py
+      uv build -o /tmp/dist
+    - |
+      if [ "$PUBLISH_PYTHON_PACKAGES" == "true" ]; then
+        echo "Publishing Python package to PyPI"
+        aws s3 cp /tmp/dist/pinazu_py-*.whl s3://techxdata-genai-artifact-271540607717-ap-southeast-1/pip/
+        echo "Python package published successfully"
+      else
+        echo "Skipping Python package publishing"
+      fi

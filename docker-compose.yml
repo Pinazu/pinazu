@@ -1,0 +1,78 @@
+services:
+  nats:
+    image: nats:linux
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+    volumes:
+      - ./configs/nats.conf:/etc/nats/nats.conf
+    command:
+      - "-config"
+      - "/etc/nats/nats.conf"
+      - "-js"
+      - "-m"
+      - "8222"
+    container_name: nats_server
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    container_name: postgres_server
+  alloy:
+    image: grafana/alloy:latest
+    container_name: grafana-alloy # OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4317
+    ports:
+      - 4317:4317
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345 
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./configs/alloy-config.alloy:/etc/alloy/config.alloy
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    restart: "no"
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set minio http://minio:9000 minioadmin minioadmin;
+      mc mb test-bucket-302010997939-ap-southeast-1 --ignore-existing;
+      echo 'MinIO buckets created successfully';
+      "
+
+
+volumes:
+  postgres_data:
+  minio_data:

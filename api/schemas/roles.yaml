@@ -1,0 +1,168 @@
+Role:
+  type: object
+  x-go-type: db.Role
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    is_system_role:
+      type: boolean
+      nullable: true
+      description: Whether this is a system-managed role
+      x-go-type: pgtype.Bool
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - role_id
+    - role_name
+    - created_at
+    - updated_at
+
+CreateRoleRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    is_system_role:
+      type: boolean
+      nullable: true
+      description: Whether this is a system-managed role
+      x-go-type: pgtype.Bool
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+  required:
+    - name
+
+UpdateRoleRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    is_system_role:
+      type: boolean
+      nullable: true
+      description: Whether this is a system-managed role
+      x-go-type: pgtype.Bool
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+
+RoleList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+      required:
+        - roles
+
+AddPermissionToRoleRequest:
+  type: object
+  properties:
+    permission_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    assigned_by:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - permission_id
+
+RolePermissionMapping:
+  type: object
+  x-go-type: db.RolePermissionMapping
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    mapping_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    role_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    permission_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    assigned_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    assigned_by:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - mapping_id
+    - role_id
+    - permission_id
+    - assigned_at
+    - assigned_by
+
+RolePermissionMappingList:
+  type: array
+  items:
+    $ref: '#/components/schemas/RolePermissionMapping'

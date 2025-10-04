@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+/* Custom CSS variables for theming */
+:root {
+  /* Light theme colors */
+  --bg-primary: oklch(96.7% 0.001 286.375);
+  --bg-secondary: oklch(94.997% 0.0041 285.934);
+  --bg-third: oklch(79.357% 0.00707 286.055);
+  --text-primary: oklch(14.1% 0.005 285.823);
+  --text-secondary: oklch(27.4% 0.006 286.033);
+  --border-color: oklch(87.1% 0.006 286.286);
+  --accent-color: oklch(14.1% 0.005 285.823);
+  --text-accent-color: oklch(96.7% 0.001 286.375);
+  color-scheme: light;
+}
+
+.dark {
+  /* Dark theme colors */
+  --bg-primary: oklch(14.1% 0.005 285.823);
+  --bg-secondary: oklch(27.4% 0.006 286.033);
+  --bg-third: oklch(37% 0.013 285.805);
+  --text-primary: oklch(92% 0.004 286.32);
+  --text-secondary: oklch(70.5% 0.015 286.067);
+  --border-color: oklch(35.691% 0.00345 286.056);
+  --accent-color: oklch(92% 0.004 286.32);
+  --text-accent-color: oklch(14.1% 0.005 285.823);
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar styles */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--border-color) transparent;
+  scroll-behavior: smooth;
+}

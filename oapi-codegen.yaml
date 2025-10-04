@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: api
+output: internal/api/api.gen.go
+generate:
+  strict-server: true
+  chi-server: true
+  models: true
+import-mapping:
+  gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db: db
+  github.com/google/uuid: uuid
+  github.com/jackc/pgx/v5/pgtype: pgtype

@@ -1,0 +1,140 @@
+Message:
+  type: object
+  x-go-type: db.ThreadMessage
+  x-go-type-import:
+    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    name: db
+  properties:
+    id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    thread_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    message:
+      type: object
+      description: JSON message content
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    sender_type:
+      type: string
+      x-go-type: db.SenderMessageType
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    result_type:
+      type: string
+      nullable: true
+      x-go-type: "*db.ResultMessageType"
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    stop_reason:
+      type: string
+      nullable: true
+      x-go-type: pgtype.Text
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    created_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    updated_at:
+      type: string
+      format: date-time
+      x-go-type: pgtype.Timestamptz
+      x-go-type-import:
+        path: github.com/jackc/pgx/v5/pgtype
+    sender_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    citations:
+      type: array
+      items:
+        type: object
+      description: JSON citations data
+      x-go-type: "[]db.JsonRaw"
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    recipient_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - id
+    - thread_id
+    - message
+    - sender_type
+    - created_at
+    - updated_at
+    - sender_id
+    - recipient_id
+
+CreateMessageRequest:
+  type: object
+  properties:
+    message:
+      type: object
+      description: JSON message content
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+    sender_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+    recipient_id:
+      type: string
+      format: uuid
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        path: github.com/google/uuid
+  required:
+    - message
+    - sender_id
+    - recipient_id
+
+UpdateMessageRequest:
+  type: object
+  properties:
+    message:
+      type: object
+      description: JSON message content
+      x-go-type: db.JsonRaw
+      x-go-type-import:
+        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        name: db
+  required:
+    - message
+
+MessageList:
+  type: object
+  allOf:
+    - $ref: '#/components/schemas/PaginationMeta'
+    - type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+        - messages
