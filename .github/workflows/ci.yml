@@ -230,18 +230,30 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           echo "Publishing Python package to PyPI"
+          echo "Package version: $(grep '^version' pyproject.toml | cut -d'"' -f2)"
           twine upload dist/*
-          echo "Python package published successfully to PyPI"
+          echo "✅ Python package published successfully to PyPI"
+          echo "📦 Install with: pip install pinazu-py"
       
       - name: Publish to Test PyPI
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: |
+          github.event_name == 'push' && 
+          github.ref == 'refs/heads/main' &&
+          secrets.TEST_PYPI_API_TOKEN != ''
         working-directory: python/pinazu-py
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
         run: |
           echo "Publishing Python package to Test PyPI"
-          twine upload --repository testpypi dist/* || echo "Upload to Test PyPI failed (may already exist)"
+          twine upload --repository testpypi dist/* 2>&1 || {
+            echo "⚠️ Upload to Test PyPI failed"
+            echo "This is normal if:"
+            echo "  - Version already exists on Test PyPI"
+            echo "  - TEST_PYPI_API_TOKEN is not configured"
+            echo "  - Token has special characters (copy/paste issue)"
+            exit 0
+          }
         continue-on-error: true
 
   build-and-push-docker:
