@@ -1,0 +1,61 @@
+environment: test
+
+http:
+  port: 8080
+
+debug: true
+
+nats:
+  url: "nats://localhost:4222"
+  jetstream_default_config:
+    max_msgs: 1000000
+    max_bytes: 1073741824
+    max_age_seconds: 86400
+    replicas: 1
+    max_deliver: 3
+
+database:
+  host: localhost
+  port: 5432
+  user: pinazu
+  password: example_password
+  dbname: pinazu
+
+tracing:
+  service_name: pinazu-core-test
+  exporter_endpoint: localhost:4317
+  exporter_insecure: true
+  sampling_ratio: 1.0
+
+scheduler:
+  enable_retries: true
+  max_retries: 3
+  retry_backoff_seconds: 5
+  enable_dead_lettering: true
+  dead_letter_topic: scheduler.dead_letter
+  batch_size: 10
+  batch_timeout_seconds: 5
+
+# Storage configuration for tests (optional - only if needed)
+# storage:
+#   s3:
+#     endpoint_url: "http://localhost:9000"
+#     access_key_id: minioadmin
+#     secret_access_key: minioadmin
+#     region: us-east-1
+#     use_path_style: true
+#     credential_type: static
+
+# cache:
+#   type: s3
+#   bucket: flow-cache-bucket-test
+
+# LLM configuration for tests
+# Add your test API keys here or use GitHub Secrets
+# llm_config:
+#   bedrock:
+#     type: assume_role
+#     region: ap-southeast-1
+#     assume_role: "arn:aws:iam::ACCOUNT_ID:role/bedrock-test-role"
+#   google:
+#     api_key: ${GOOGLE_API_KEY}  # Will be replaced from environment variable

@@ -6,4 +6,8 @@
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "go.testEnvFile": "${workspaceFolder}/.env",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "pinazu",
+        "projectKey": "Pinazu_pinazu"
+    },
 }
