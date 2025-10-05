@@ -102,6 +102,45 @@ install_sqlc() {
     chmod +x "$INSTALL_DIR/sqlc"
 }
 
+# Configure PATH for the current shell
+configure_path() {
+    local shell_config path_export
+
+    path_export="export PATH=\"\$HOME/.local/bin:\$PATH\""
+
+    # Detect the shell and its config file
+    if [[ "$SHELL" == *"zsh"* ]]; then
+        shell_config="$HOME/.zshrc"
+    elif [[ "$SHELL" == *"bash"* ]]; then
+        # On macOS, use .bash_profile; on Linux, use .bashrc
+        if [[ "$SQLC_OS" == "darwin" ]]; then
+            shell_config="$HOME/.bash_profile"
+        else
+            shell_config="$HOME/.bashrc"
+        fi
+    else
+        log_warning "Unknown shell: $SHELL"
+        log_warning "Please manually add this to your shell profile:"
+        log_warning "$path_export"
+        return
+    fi
+
+    # Check if PATH is already configured
+    if grep -q ".local/bin" "$shell_config" 2>/dev/null; then
+        log_info "PATH already configured in $shell_config"
+        return
+    fi
+
+    # Add PATH configuration
+    log_info "Configuring PATH in $shell_config..."
+    echo "" >> "$shell_config"
+    echo "# Added by SQLC installer" >> "$shell_config"
+    echo "$path_export" >> "$shell_config"
+    
+    log_success "PATH configured in $shell_config"
+    log_info "Run 'source $shell_config' or restart your terminal to apply changes"
+}
+
 # Verify installation
 verify_installation() {
     local version
@@ -122,9 +161,12 @@ verify_installation() {
     
     # Check if it's in PATH
     if ! command -v sqlc >/dev/null 2>&1; then
-        log_warning "SQLC is not in your PATH"
-        log_warning "Add this to your shell profile (.bashrc, .zshrc, etc.):"
-        log_warning "export PATH=\"\$HOME/.local/bin:\$PATH\""
+        log_warning "SQLC is not in your current PATH"
+        
+        # Auto-configure PATH on macOS and Linux
+        configure_path
+    else
+        log_success "SQLC is already in your PATH"
     fi
 }
 

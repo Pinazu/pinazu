@@ -27,8 +27,7 @@ COPY ./oapi-codegen.yaml .
 COPY go.mod .
 COPY go.sum .
 
-RUN go mod tidy && \
-    go run ./scripts/build-openapi.go && \
+RUN go run ./scripts/build-openapi.go && \
     CGO_ENABLED=0 go build -o pinazu-core ./cmd && \
     chmod +x pinazu-core
 
