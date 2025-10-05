@@ -23,7 +23,7 @@ RUN go mod tidy && \
 FROM alpine:3.19
 
 # Install tini for proper signal handling
-RUN apk add --no-cache tini \
+RUN apk add --no-cache tini && \
     addgroup -g 1000 apps && \
     adduser -D -u 1000 -G apps apps
 
