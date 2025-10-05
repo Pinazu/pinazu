@@ -141,7 +141,7 @@ func (as *AgentService) handleAnthropicRequest(m []anthropic.MessageParam, spec 
 	// Fetch and convert tools for this agent
 	if len(spec.ToolRefs) > 0 {
 		var err error
-		tools, err = as.fetchAnthropicTools(spec.ToolRefs, spec.Model.ModelID)
+		tools, err = as.fetchAnthropicTools(spec.ToolRefs)
 		if err != nil {
 			as.log.Error("Failed to convert tools to Anthropic format", "error", err)
 			return nil, "", fmt.Errorf("failed to convert tools to Anthropic format: %w", err)
@@ -482,7 +482,7 @@ func (as *AgentService) publishAnthropicStreamEvent(event anthropic.MessageStrea
 }
 
 // fetchAgentTools retrieves tools from database based on agent's tool_refs
-func (as *AgentService) fetchAnthropicTools(toolRefs []uuid.UUID, modelID string) ([]anthropic.ToolUnionParam, error) {
+func (as *AgentService) fetchAnthropicTools(toolRefs []uuid.UUID) ([]anthropic.ToolUnionParam, error) {
 	var anthropicTools = []anthropic.ToolUnionParam{}
 
 	if len(toolRefs) == 0 {
