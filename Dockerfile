@@ -15,13 +15,13 @@ RUN apk add --no-cache git
 
 WORKDIR /home/apps
 
-COPY ./api .
-COPY ./cli .
-COPY ./cmd .
-COPY ./configs .
-COPY ./internal .
-COPY ./sql .
-COPY ./scripts .
+COPY ./api ./api
+COPY ./cli ./cli
+COPY ./cmd ./cmd
+COPY ./configs ./configs
+COPY ./internal ./internal
+COPY ./sql ./sql
+COPY ./scripts ./scripts
 COPY ./sqlc.yaml .
 COPY ./oapi-codegen.yaml .
 COPY go.mod .
