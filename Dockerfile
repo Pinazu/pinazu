@@ -1,23 +1,33 @@
-FROM 271540607717.dkr.ecr.ap-southeast-1.amazonaws.com/secure-vl-base/nodejs:20 AS build-fe
+# Build frontend with Node.js
+FROM node:20-alpine AS build-fe
 
 WORKDIR /home/apps
-COPY --chown=apps:apps ./web /home/apps
+COPY ./web /home/apps
 
 RUN npm ci && \
     npm run build
 
-FROM 271540607717.dkr.ecr.ap-southeast-1.amazonaws.com/secure-vl-base/golang:1.24-r1 AS build
+# Build Go application
+FROM golang:1.23-alpine AS build
 
 WORKDIR /home/apps
 
-COPY --chown=apps:apps . .
+COPY . .
 
 RUN go mod tidy && \
     go run ./scripts/build-openapi.go && \
     CGO_ENABLED=0 go build -o pinazu-core ./cmd && \
     chmod +x pinazu-core
 
-FROM 271540607717.dkr.ecr.ap-southeast-1.amazonaws.com/secure-vl-base/minimal-base:1.0.0-r0
+# Final minimal runtime image
+FROM alpine:3.19
+
+# Install tini for proper signal handling
+RUN apk add --no-cache tini
+
+# Create non-root user
+RUN addgroup -g 1000 apps && \
+    adduser -D -u 1000 -G apps apps
 
 WORKDIR /home/apps
 USER apps
