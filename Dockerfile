@@ -2,10 +2,15 @@
 FROM node:20-alpine AS build-fe
 
 WORKDIR /home/apps
-COPY ./web /home/apps
 
-RUN npm ci && \
-    npm run build
+# Copy only package files first for better caching
+COPY ./web/package*.json ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+
+# Then copy source code and build
+COPY ./web .
+RUN npm run build
 
 # Build Go application
 FROM golang:1.25-alpine AS build
@@ -15,6 +20,12 @@ RUN apk add --no-cache git
 
 WORKDIR /home/apps
 
+# Copy dependency files first for better caching
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
+
+# Then copy source code
 COPY ./api ./api
 COPY ./cli ./cli
 COPY ./cmd ./cmd
@@ -24,10 +35,10 @@ COPY ./sql ./sql
 COPY ./scripts ./scripts
 COPY ./sqlc.yaml .
 COPY ./oapi-codegen.yaml .
-COPY go.mod .
-COPY go.sum .
 
-RUN go run ./scripts/build-openapi.go && \
+# Build with cache
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go run ./scripts/build-openapi.go && \
     CGO_ENABLED=0 go build -o pinazu-core ./cmd && \
     chmod +x pinazu-core
 
