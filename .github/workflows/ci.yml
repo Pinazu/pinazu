@@ -236,22 +236,27 @@ jobs:
           echo "📦 Install with: pip install pinazu-py"
       
       - name: Publish to Test PyPI
-        if: |
-          github.event_name == 'push' && 
-          github.ref == 'refs/heads/main' &&
-          secrets.TEST_PYPI_API_TOKEN != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: python/pinazu-py
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
         run: |
+          if [ -z "$TWINE_PASSWORD" ] || [ "$TWINE_PASSWORD" = "" ]; then
+            echo "⚠️ TEST_PYPI_API_TOKEN not configured - skipping Test PyPI upload"
+            echo "This is optional. To enable:"
+            echo "  1. Create token at https://test.pypi.org"
+            echo "  2. Add as GitHub secret: TEST_PYPI_API_TOKEN"
+            exit 0
+          fi
+          
           echo "Publishing Python package to Test PyPI"
           twine upload --repository testpypi dist/* 2>&1 || {
             echo "⚠️ Upload to Test PyPI failed"
             echo "This is normal if:"
             echo "  - Version already exists on Test PyPI"
-            echo "  - TEST_PYPI_API_TOKEN is not configured"
             echo "  - Token has special characters (copy/paste issue)"
+            echo "To fix token issues, regenerate at https://test.pypi.org"
             exit 0
           }
         continue-on-error: true
