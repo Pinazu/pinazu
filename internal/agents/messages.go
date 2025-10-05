@@ -7,7 +7,7 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 	"github.com/openai/openai-go"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+	"github.com/pinazu/internal/db"
 	"google.golang.org/genai"
 )
 

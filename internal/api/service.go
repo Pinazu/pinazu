@@ -10,10 +10,10 @@ import (
 	ws "github.com/coder/websocket"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/api/websocket"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/utils"
+	"github.com/pinazu/internal/api/websocket"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
+	"github.com/pinazu/internal/utils"
 )
 
 type ApiGatewayService struct {

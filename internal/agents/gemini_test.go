@@ -7,9 +7,9 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/pinazu/internal/service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
 	"google.golang.org/genai"
 )
 

@@ -2,7 +2,7 @@ User:
   type: object
   x-go-type: db.GetUsersRow
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -23,14 +23,14 @@ User:
       description: Additional user information in JSON format
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     provider_name:
       type: string
       description: Authentication provider (local, google, etc.)
       x-go-type: db.ProviderName
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     is_online:
       type: boolean
@@ -79,7 +79,7 @@ CreateUserRequest:
       description: Additional user information in JSON format
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     password_hash:
       type: string
@@ -89,7 +89,7 @@ CreateUserRequest:
       description: Authentication provider (local, google, etc.)
       x-go-type: db.ProviderName
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
   required:
     - name
@@ -114,7 +114,7 @@ UpdateUserRequest:
       description: Authentication provider (local, google, etc.)
       x-go-type: db.ProviderName
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
 
 UserList:
@@ -152,7 +152,7 @@ UserRoleMapping:
   type: object
   x-go-type: db.UserRoleMapping
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     mapping_id:

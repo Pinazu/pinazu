@@ -36,7 +36,7 @@ events:
       # Additional fields for context
       - name: Provider
         type: db.ProviderModel
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
         description: The provider name that the agent is calling from
     customValidation: |
       if msg.Type == "" {

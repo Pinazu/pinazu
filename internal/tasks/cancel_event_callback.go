@@ -2,7 +2,7 @@ package tasks
 
 import (
 	"github.com/nats-io/nats.go"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/service"
 )
 
 // cancelEventCallback handles the task cancel event callback

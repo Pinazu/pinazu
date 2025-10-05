@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-hclog"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/service"
 )
 
 type TaskService struct {

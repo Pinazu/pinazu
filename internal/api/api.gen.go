@@ -18,7 +18,7 @@ import (
 	"github.com/oapi-codegen/runtime"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 	openapi_types "github.com/oapi-codegen/runtime/types"
-	db "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+	db "github.com/pinazu/internal/db"
 )
 
 // AddPermissionToAgentRequest defines model for AddPermissionToAgentRequest.

@@ -3,7 +3,7 @@ package agents
 import (
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/service"
 )
 
 // handleOpenAIRequest handles requests for OpenAI models

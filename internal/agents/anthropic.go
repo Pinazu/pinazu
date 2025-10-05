@@ -11,8 +11,8 @@ import (
 	"github.com/anthropics/anthropic-sdk-go/packages/param"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 )
 
 // handleAnthropicRequest handles requests for Anthropic models

@@ -14,19 +14,19 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/utils"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
+	"github.com/pinazu/internal/utils"
 )
 
 // Common test setup for database queries
 func setupTestDB(t *testing.T) *pgxpool.Pool {
 	t.Helper()
-	db_pool, err := pgxpool.New(context.Background(), os.Getenv("POSTGRES_URL"))
+	dbPool, err := pgxpool.New(context.Background(), os.Getenv("POSTGRES_URL"))
 	if err != nil {
 		t.Fatalf("Failed to connect to the database: %v", err)
 	}
-	return db_pool
+	return dbPool
 }
 
 // Common test setup for nats connection

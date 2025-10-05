@@ -8,14 +8,14 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/pinazu/internal/agents"
+	"github.com/pinazu/internal/api"
+	"github.com/pinazu/internal/flows"
+	"github.com/pinazu/internal/service"
+	"github.com/pinazu/internal/tasks"
+	"github.com/pinazu/internal/tools"
+	"github.com/pinazu/internal/worker"
 	"github.com/urfave/cli/v3"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/agents"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/api"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/flows"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/tasks"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/tools"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/worker"
 )
 
 func CreateCLICommand() *cli.Command {

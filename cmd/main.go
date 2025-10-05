@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/cli"
+	"github.com/pinazu/cli"
 )
 
 func main() {

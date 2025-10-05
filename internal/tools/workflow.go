@@ -3,7 +3,7 @@ package tools
 import (
 	"time"
 
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/service"
 )
 
 // executeWorkflowTool publish tool execute event to workflow execution service

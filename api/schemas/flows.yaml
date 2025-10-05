@@ -2,7 +2,7 @@ Flow:
   type: object
   x-go-type: db.Flow
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -29,7 +29,7 @@ Flow:
       description: Additional information related to the flow
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     tags:
       type: array
@@ -50,7 +50,7 @@ Flow:
       description: Schema for the parameters of the flow
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     code_location:
       type: string
@@ -79,7 +79,7 @@ FlowRun:
   type: object
   x-go-type: db.FlowRun
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     flow_run_id:
@@ -96,7 +96,7 @@ FlowRun:
       description: Parameters used for the flow run
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     status:
       type: string
@@ -145,7 +145,7 @@ FlowRun:
       description: Status of tasks within the flow run
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     success_task_results:
       type: object
@@ -153,7 +153,7 @@ FlowRun:
       description: Results of successful tasks in the flow run
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     error_message:
       type: string

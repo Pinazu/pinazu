@@ -9,14 +9,14 @@ events:
         import: "github.com/google/uuid"
       - name: Provider
         type: db.ProviderModel
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
         description: The provider name that the agent is calling from. This will use to parse the message structure based on the provider name
       - name: RecipientId
         type: uuid.UUID
         import: "github.com/google/uuid"
       - name: Message
         type: db.JsonRaw
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
     customValidation: |
       if msg.AgentId == uuid.Nil {
         return fmt.Errorf("agent_id is required")
@@ -40,10 +40,10 @@ events:
         type: string
       - name: Content
         type: db.JsonRaw
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
       - name: ResultType
         type: db.ResultMessageType
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
         description: Type of the tool result
       - name: IsError
         type: bool

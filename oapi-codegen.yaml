@@ -6,6 +6,6 @@ generate:
   chi-server: true
   models: true
 import-mapping:
-  gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db: db
+  github.com/pinazu/internal/db: db
   github.com/google/uuid: uuid
   github.com/jackc/pgx/v5/pgtype: pgtype

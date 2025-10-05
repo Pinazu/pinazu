@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nuid"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/telemetry"
+	"github.com/pinazu/internal/telemetry"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 
