@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pinazu-py"
-version = "0.6.22"
+version = "0.6.23"
 description = "Python Client to interact with Pinazu Server"
 readme = "README.md"
 authors = [
