@@ -3,16 +3,6 @@
 ## Description
 Core Service for orchestrating and managing AI Generative Application workflows.
 
-## Architecture
-
-![Conceptual Architecture](/docs/img/conceptual_architecture.png)
-
-Conceptual of the Core Architecture interact in an microservices environemnts.
-
-![Core Architecture](/docs/img/coreapp_architecture.png)
-
-Core Architecture represent the components and their interactions.
-
 ## Badges
 On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
@@ -85,6 +75,8 @@ State if you are open to contributions and what your requirements are for accept
 For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
 You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+
+Update thet github workflow for me so that it should add a branch for release. If code put that branch it will run the push docker into docker hub, and release into main PyPI instead of the test one. When user push into the main branch, It will push into the TestPypI and release a test docker image into docker hub version test only. Pull request will not upload anything, only test pass build and test cases
 
 ## Authors and acknowledgment
 Show your appreciation to those who have contributed to the project.

@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - release
 
 env:
   POSTGRES_USER: pinazu
@@ -153,7 +154,7 @@ jobs:
         run: kill ${{ env.PINAZU_PID }} || true
 
   docker-build-test:
-    name: Docker Build Test
+    name: Docker Build Test (No Push)
     runs-on: ubuntu-latest
     
     steps:
@@ -163,7 +164,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
-      - name: Build Docker image (AMD64 only for PR)
+      - name: Build Docker image (AMD64 only for PR - NO PUSH)
         uses: docker/build-push-action@v5
         with:
           context: .

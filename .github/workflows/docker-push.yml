@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - release
 
 jobs:
   build-and-push:
@@ -14,14 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/pinazu
-          tags: |
-            type=raw,value=main
-            type=sha,prefix=sha-
+      - name: Set Docker tags for main branch
+        if: github.ref == 'refs/heads/main'
+        id: tags-main
+        run: |
+          echo "tags=${{ secrets.DOCKERHUB_USERNAME }}/pinazu:test" >> $GITHUB_OUTPUT
+          echo "image_ref=${{ secrets.DOCKERHUB_USERNAME }}/pinazu:test" >> $GITHUB_OUTPUT
+      
+      - name: Set Docker tags for release branch
+        if: github.ref == 'refs/heads/release'
+        id: tags-release
+        run: |
+          echo "tags=${{ secrets.DOCKERHUB_USERNAME }}/pinazu:latest,${{ secrets.DOCKERHUB_USERNAME }}/pinazu:stable" >> $GITHUB_OUTPUT
+          echo "image_ref=${{ secrets.DOCKERHUB_USERNAME }}/pinazu:latest" >> $GITHUB_OUTPUT
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -32,21 +38,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build and push
+      - name: Build and push (main branch - test image)
+        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.tags-main.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build and push (release branch - production image)
+        if: github.ref == 'refs/heads/release'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags-release.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/pinazu:main
+          image-ref: ${{ github.ref == 'refs/heads/main' && steps.tags-main.outputs.image_ref || steps.tags-release.outputs.image_ref }}
           format: 'sarif'
           output: 'trivy-results.sarif'
         continue-on-error: true

@@ -1,13 +1,16 @@
-name: Release
+name: Tagged Release
 
 on:
   push:
     tags:
       - 'v*'
 
+# This workflow handles versioned releases (tags like v1.0.0)
+# For regular production releases, push to the 'release' branch instead
+
 jobs:
   docker-multi-arch:
-    name: Docker Multi-Arch Release
+    name: Docker Multi-Arch Tagged Release
     runs-on: ubuntu-latest
     
     steps:
@@ -63,7 +66,7 @@ jobs:
         continue-on-error: true
   
   publish-python:
-    name: Publish to PyPI
+    name: Publish to PyPI (Tagged Release)
     runs-on: ubuntu-latest
     
     steps:

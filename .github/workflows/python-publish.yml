@@ -1,0 +1,63 @@
+name: Publish Python Package
+
+on:
+  push:
+    branches:
+      - main
+      - release
+
+jobs:
+  publish-python:
+    name: Publish Python Package
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+      
+      - name: Build Python package
+        working-directory: python/pinazu-py
+        run: |
+          echo "Building Pinazu Python Package"
+          python -m build
+      
+      - name: Check package with twine
+        working-directory: python/pinazu-py
+        run: |
+          twine check dist/*
+      
+      - name: Publish to TestPyPI (main branch)
+        if: github.ref == 'refs/heads/main'
+        working-directory: python/pinazu-py
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        run: |
+          echo "Publishing Python package to TestPyPI"
+          echo "Package version: $(grep '^version' pyproject.toml | cut -d'"' -f2)"
+          twine upload --repository testpypi dist/*
+          echo "✅ Python package published successfully to TestPyPI"
+          echo "📦 Install with: pip install --index-url https://test.pypi.org/simple/ pinazu-py"
+      
+      - name: Publish to PyPI (release branch)
+        if: github.ref == 'refs/heads/release'
+        working-directory: python/pinazu-py
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "Publishing Python package to PyPI"
+          echo "Package version: $(grep '^version' pyproject.toml | cut -d'"' -f2)"
+          twine upload dist/*
+          echo "✅ Python package published successfully to PyPI"
+          echo "📦 Install with: pip install pinazu-py"
