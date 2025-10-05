@@ -416,7 +416,7 @@ test.describe.serial('Tasks API', () => {
         specs: `
 model:
   provider: "bedrock/anthropic"
-  model_id: "anthropic.claude-3-haiku-20240307-v1:0"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 2048
   stream: true
 

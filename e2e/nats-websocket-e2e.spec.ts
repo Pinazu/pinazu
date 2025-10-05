@@ -21,7 +21,7 @@ test.describe.serial('NATS WebSocket E2E Integration', () => {
       specs: `
 model:
   provider: "bedrock/anthropic"
-  model_id: "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 2048
   stream: true
   thinking:
@@ -62,7 +62,7 @@ tool_refs: []
       specs: `
 model:
   provider: "bedrock"
-  model_id: "apac.anthropic.claude-3-7-sonnet-20250219-v1:0"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 4000
   stream: true
   thinking:

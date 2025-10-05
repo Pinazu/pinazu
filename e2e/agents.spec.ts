@@ -34,7 +34,7 @@ test.describe.serial('Agents API', () => {
       specs: `
 model:
   provider: "anthropic"
-  model_id: "claude-3-sonnet"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 4096
   temperature: 0.7
 
@@ -95,7 +95,7 @@ parameters:
     expect(responseBody.id).toBe(createdAgentId);
     expect(responseBody.name).toBe('Test Agent for API Testing');
     expect(responseBody.description).toBe('A test agent created via Playwright API tests');
-    expect(responseBody.specs).toContain('claude-3-sonnet');
+    expect(responseBody.specs).toContain('global.anthropic.claude-sonnet-4-5-20250929-v1:0');
     expect(responseBody.specs).toContain('calculator');
   });
 
@@ -137,7 +137,7 @@ parameters:
       specs: `
 model:
   provider: "anthropic"
-  model_id: "claude-3-opus"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 8192
   temperature: 0.3
 
@@ -171,7 +171,7 @@ parameters:
     expect(responseBody.name).toBe(updateData.name);
     expect(responseBody.description).toBe(updateData.description);
     expect(responseBody.specs).toBe(updateData.specs);
-    expect(responseBody.specs).toContain('claude-3-opus');
+    expect(responseBody.specs).toContain('global.anthropic.claude-sonnet-4-5-20250929-v1:0');
     expect(responseBody.specs).toContain('translator');
   });
 
@@ -243,7 +243,7 @@ parameters:
       specs: `
 model:
   provider: "anthropic"
-  model_id: "claude-3-sonnet"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   max_tokens: 4096
   temperature: 0.5
   top_p: 0.9
@@ -342,7 +342,7 @@ constraints:
       specs: `
 model:
   provider: "anthropic"
-  model_id: "claude-3-sonnet"
+  model_id: "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   invalid_yaml: [unclosed array
 system: |
   This YAML has syntax errors

@@ -236,7 +236,7 @@ test.describe.serial('Permissions API Extended Tests', () => {
             "type": "agent",
             "id_pattern": "agent-*",
             "properties": {
-              "model_types": ["claude-3-sonnet", "claude-3-haiku"],
+              "model_types": ["global.anthropic.claude-sonnet-4-5-20250929-v1:0", "claude-3-haiku"],
               "capabilities": {
                 "tools": ["calculator", "search"],
                 "max_context": 200000

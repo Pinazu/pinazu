@@ -53,8 +53,7 @@ cache:
 
 llm_config:
   bedrock:
-    type: assume_role
-    region: ap-southeast-1
-    assume_role: "arn:aws:iam::130506138320:role/bedrock-cross-account-role"
+    type: default
+    region: us-west-2
   google:
-    api_key: AIzaSyDHPIi7IQhrN4Y9W3PizbZLegwOWfPYyB0
+    api_key: ${GOOGLE_API_KEY}

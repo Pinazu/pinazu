@@ -402,14 +402,9 @@ func getSystemPrompt(spec *AgentSpecs, subAgentList []db.Agent) []anthropic.Text
 	textBlock := anthropic.TextBlockParam{
 		Type: "text",
 		Text: systemText,
-	}
-
-	// Only add CacheControl if model doesn't contain "haiku-3" or "sonnet-3-5"
-	modelID := strings.ToLower(spec.Model.ModelID)
-	if !strings.Contains(modelID, "3-haiku") && !strings.Contains(modelID, "3-5-sonnet") {
-		textBlock.CacheControl = anthropic.CacheControlEphemeralParam{
+		CacheControl: anthropic.CacheControlEphemeralParam{
 			Type: "ephemeral",
-		}
+		},
 	}
 
 	return []anthropic.TextBlockParam{textBlock}
@@ -440,14 +435,9 @@ func getSystemForThinkingAndStructureOutput(spec *AgentSpecs) []anthropic.TextBl
 	textBlock := anthropic.TextBlockParam{
 		Type: "text",
 		Text: systemText,
-	}
-
-	// Only add CacheControl if model doesn't contain "haiku-3" or "sonnet-3-5"
-	modelID := strings.ToLower(spec.Model.ModelID)
-	if !strings.Contains(modelID, "3-haiku") && !strings.Contains(modelID, "3-5-sonnet") {
-		textBlock.CacheControl = anthropic.CacheControlEphemeralParam{
+		CacheControl: anthropic.CacheControlEphemeralParam{
 			Type: "ephemeral",
-		}
+		},
 	}
 
 	return []anthropic.TextBlockParam{textBlock}
@@ -611,14 +601,9 @@ func (as *AgentService) fetchAnthropicTools(toolRefs []uuid.UUID, modelID string
 					Properties: properties,
 					Required:   required,
 				},
-			}
-
-			// Only add CacheControl if model doesn't contain "haiku-3" or "sonnet-3-5"
-			lowerModelID := strings.ToLower(modelID)
-			if !strings.Contains(lowerModelID, "3-haiku") && !strings.Contains(lowerModelID, "3-5-sonnet") {
-				toolParam.CacheControl = anthropic.CacheControlEphemeralParam{
+				CacheControl: anthropic.CacheControlEphemeralParam{
 					Type: "ephemeral",
-				}
+				},
 			}
 
 			anthropicTool := anthropic.ToolUnionParam{

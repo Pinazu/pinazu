@@ -3,7 +3,6 @@ package tools
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/anthropics/anthropic-sdk-go"
@@ -13,7 +12,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/pinazu/internal/db"
 	"github.com/pinazu/internal/service"
-	"gopkg.in/yaml.v3"
 )
 
 // gatherEventCallback handles the tool gather result event callback
@@ -82,16 +80,8 @@ func (ts *ToolService) gatherEventCallback(msg *nats.Msg) {
 	}
 	ts.log.Info("Updated tool run status", "tool_run_id", req.Msg.ToolRunId, "status", status)
 
-	// Get agent information for cache control and result formatting
-	agent, err := queries.GetAgentByID(ts.ctx, toolRunStatus.AgentID)
-	if err != nil {
-		ts.log.Error("Failed to get agent information", "agent_id", toolRunStatus.AgentID, "error", err)
-		// Continue with empty agent - no cache control will be added
-		agent = db.Agent{}
-	}
-
 	// Create tool result block using helper function
-	toolResultBlock, err := ts.createToolResultBlock(toolRunStatus.ID, req.Msg.Content, req.Msg.ResultType, req.Msg.IsError, agent)
+	toolResultBlock, err := ts.createToolResultBlock(toolRunStatus.ID, req.Msg.Content, req.Msg.ResultType, req.Msg.IsError)
 	if err != nil {
 		ts.log.Error("Failed to create tool result block", "error", err)
 		return
@@ -184,7 +174,7 @@ func (ts *ToolService) gatherEventCallback(msg *nats.Msg) {
 
 				// Create tool result block using helper function
 				isError := childToolRun.Status == db.ToolRunStatusFailed
-				toolResultBlock, err := ts.createToolResultBlock(childToolRun.ID, childToolRun.Result, resultType, isError, agent)
+				toolResultBlock, err := ts.createToolResultBlock(childToolRun.ID, childToolRun.Result, resultType, isError)
 				if err != nil {
 					ts.log.Error("Failed to create child tool result block", "child_id", childToolRun.ID, "error", err)
 					continue
@@ -270,7 +260,7 @@ func (ts *ToolService) gatherEventCallback(msg *nats.Msg) {
 			}
 
 			// Add cache control if appropriate
-			if ts.shouldUseCacheControl(agent, allContentBlocks) {
+			if ts.shouldUseCacheControl(allContentBlocks) {
 				batchToolResultBlock.CacheControl = anthropic.CacheControlEphemeralParam{
 					Type: "ephemeral",
 				}
@@ -420,7 +410,7 @@ func (ts *ToolService) createToolResultContent(resultContent db.JsonRaw, resultT
 }
 
 // shouldUseCacheControl determines if cache control should be added based on text length and agent model
-func (ts *ToolService) shouldUseCacheControl(agent db.Agent, content []anthropic.ToolResultBlockParamContentUnion) bool {
+func (ts *ToolService) shouldUseCacheControl(content []anthropic.ToolResultBlockParamContentUnion) bool {
 	const maxTextSizeBytes = 40 * 1024 // 40kB threshold
 
 	// Fast path: check text size first with early exit
@@ -432,8 +422,7 @@ func (ts *ToolService) shouldUseCacheControl(agent db.Agent, content []anthropic
 
 			// Early exit as soon as we exceed threshold - no need to continue counting
 			if totalTextSize > maxTextSizeBytes {
-				// Text is large enough, now check if model supports caching
-				return ts.modelSupportsCaching(agent)
+				return true
 			}
 		}
 	}
@@ -442,30 +431,8 @@ func (ts *ToolService) shouldUseCacheControl(agent db.Agent, content []anthropic
 	return false
 }
 
-// modelSupportsCaching checks if the agent's model supports cache control
-func (ts *ToolService) modelSupportsCaching(agent db.Agent) bool {
-	if !agent.Specs.Valid {
-		return false
-	}
-
-	// Parse agent spec to get model ID
-	var agentSpec struct {
-		Model struct {
-			ModelID string `yaml:"model_id"`
-		} `yaml:"model"`
-	}
-
-	if err := yaml.Unmarshal([]byte(agent.Specs.String), &agentSpec); err != nil {
-		return false
-	}
-
-	// Only add CacheControl if model doesn't contain "haiku-3" or "sonnet-3-5"
-	modelID := strings.ToLower(agentSpec.Model.ModelID)
-	return !strings.Contains(modelID, "3-haiku") && !strings.Contains(modelID, "3-5-sonnet")
-}
-
 // createToolResultBlock creates a complete tool result block with proper content and cache control
-func (ts *ToolService) createToolResultBlock(toolRunID string, resultContent db.JsonRaw, resultType db.ResultMessageType, isError bool, agent db.Agent) (*anthropic.ToolResultBlockParam, error) {
+func (ts *ToolService) createToolResultBlock(toolRunID string, resultContent db.JsonRaw, resultType db.ResultMessageType, isError bool) (*anthropic.ToolResultBlockParam, error) {
 	// Create tool result content
 	content, err := ts.createToolResultContent(resultContent, resultType, isError)
 	if err != nil {
@@ -481,7 +448,7 @@ func (ts *ToolService) createToolResultBlock(toolRunID string, resultContent db.
 	}
 
 	// Add cache control if text is large enough and model supports it
-	if ts.shouldUseCacheControl(agent, content) {
+	if ts.shouldUseCacheControl(content) {
 		toolResultBlock.CacheControl = anthropic.CacheControlEphemeralParam{
 			Type: "ephemeral",
 		}

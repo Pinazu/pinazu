@@ -21,6 +21,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testModelID = "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+
 // Common test setup for database queries
 func setupTestDB(t *testing.T) *pgxpool.Pool {
 	if err := godotenv.Load("../../.env"); err != nil {
@@ -28,7 +30,7 @@ func setupTestDB(t *testing.T) *pgxpool.Pool {
 		fmt.Println("Using environment variables from the system")
 	}
 	t.Helper()
-	db_pool, err := pgxpool.New(context.Background(), os.Getenv("POSTGRES_URL"))
+	dbPool, err := pgxpool.New(context.Background(), os.Getenv("POSTGRES_URL"))
 	if err != nil {
 		t.Fatalf("Failed to connect to the database: %v", err)
 	}
@@ -36,10 +38,10 @@ func setupTestDB(t *testing.T) *pgxpool.Pool {
 	if err := goose.SetDialect("postgres"); err != nil {
 		panic(fmt.Errorf("failed to set goose dialect: %w", err))
 	}
-	if err := goose.Up(pq_compat.OpenDBFromPool(db_pool), "migrations"); err != nil {
+	if err := goose.Up(pq_compat.OpenDBFromPool(dbPool), "migrations"); err != nil {
 		panic(fmt.Errorf("failed to run migrations: %w", err))
 	}
-	return db_pool
+	return dbPool
 }
 
 func TestGetSystemPrompt(t *testing.T) {
@@ -49,11 +51,11 @@ func TestGetSystemPrompt(t *testing.T) {
 		expected []anthropic.TextBlockParam
 	}{
 		{
-			name: "simple_system_prompt_with_cache_supported_model",
+			name: "simple_system_prompt",
 			spec: &AgentSpecs{
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
-					ModelID: "claude-sonnet-4",
+					ModelID: testModelID,
 				},
 			},
 			expected: []anthropic.TextBlockParam{
@@ -67,47 +69,11 @@ func TestGetSystemPrompt(t *testing.T) {
 			},
 		},
 		{
-			name: "simple_system_prompt_with_haiku_no_cache",
-			spec: &AgentSpecs{
-				System: "You are a helpful assistant.",
-				Model: ModelSpecs{
-					ModelID: "claude-3-haiku-20240307",
-				},
-			},
-			expected: []anthropic.TextBlockParam{
-				{
-					Type: "text",
-					Text: "You are a helpful assistant.",
-					CacheControl: anthropic.CacheControlEphemeralParam{
-						Type: "",
-					},
-				},
-			},
-		},
-		{
-			name: "simple_system_prompt_with_sonnet_35_no_cache",
-			spec: &AgentSpecs{
-				System: "You are a helpful assistant.",
-				Model: ModelSpecs{
-					ModelID: "claude-3-5-sonnet-20240620",
-				},
-			},
-			expected: []anthropic.TextBlockParam{
-				{
-					Type: "text",
-					Text: "You are a helpful assistant.",
-					CacheControl: anthropic.CacheControlEphemeralParam{
-						Type: "",
-					},
-				},
-			},
-		},
-		{
-			name: "empty_system_prompt_with_opus",
+			name: "empty_system_prompt",
 			spec: &AgentSpecs{
 				System: "",
 				Model: ModelSpecs{
-					ModelID: "claude-opus-4",
+					ModelID: testModelID,
 				},
 			},
 			expected: []anthropic.TextBlockParam{
@@ -121,11 +87,11 @@ func TestGetSystemPrompt(t *testing.T) {
 			},
 		},
 		{
-			name: "multiline_system_prompt_with_haiku",
+			name: "multiline_system_prompt",
 			spec: &AgentSpecs{
 				System: "You are a helpful assistant.\nAlways be polite and respectful.\nProvide clear and concise answers.",
 				Model: ModelSpecs{
-					ModelID: "claude-3-haiku-20240307",
+					ModelID: testModelID,
 				},
 			},
 			expected: []anthropic.TextBlockParam{
@@ -133,17 +99,17 @@ func TestGetSystemPrompt(t *testing.T) {
 					Type: "text",
 					Text: "You are a helpful assistant.\nAlways be polite and respectful.\nProvide clear and concise answers.",
 					CacheControl: anthropic.CacheControlEphemeralParam{
-						Type: "",
+						Type: "ephemeral",
 					},
 				},
 			},
 		},
 		{
-			name: "system_prompt_with_structured_output_opus",
+			name: "system_prompt_with_structured_output",
 			spec: &AgentSpecs{
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
-					ModelID: "claude-opus-4",
+					ModelID: testModelID,
 					ResponseFormat: map[string]any{
 						"type": "object",
 						"properties": map[string]any{
@@ -169,11 +135,11 @@ func TestGetSystemPrompt(t *testing.T) {
 			},
 		},
 		{
-			name: "system_prompt_with_empty_response_format_sonnet_35",
+			name: "system_prompt_with_empty_response_format",
 			spec: &AgentSpecs{
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
-					ModelID:        "claude-3-5-sonnet-20240620",
+					ModelID:        testModelID,
 					ResponseFormat: map[string]any{},
 				},
 			},
@@ -182,17 +148,17 @@ func TestGetSystemPrompt(t *testing.T) {
 					Type: "text",
 					Text: "You are a helpful assistant.",
 					CacheControl: anthropic.CacheControlEphemeralParam{
-						Type: "",
+						Type: "ephemeral",
 					},
 				},
 			},
 		},
 		{
-			name: "system_prompt_with_nil_response_format_sonnet_4",
+			name: "system_prompt_with_nil_response_format",
 			spec: &AgentSpecs{
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
-					ModelID:        "claude-sonnet-4",
+					ModelID:        testModelID,
 					ResponseFormat: nil,
 				},
 			},
@@ -223,8 +189,8 @@ func TestGetSystemPrompt(t *testing.T) {
 
 func TestFetchAnthropicTools(t *testing.T) {
 	t.Parallel()
-	db_pool := setupTestDB(t)
-	queries := db.New(db_pool)
+	dbPool := setupTestDB(t)
+	queries := db.New(dbPool)
 
 	// Create a fake created_by user
 	userId, err := uuid.Parse("550e8400-c95b-4444-6666-446655440000")
@@ -261,7 +227,7 @@ func TestFetchAnthropicTools(t *testing.T) {
 		if err != nil {
 			t.Logf("Failed to cleanup test tool: %v", err)
 		}
-		db_pool.Close()
+		dbPool.Close()
 	}()
 	tests := []struct {
 		name        string
@@ -272,9 +238,9 @@ func TestFetchAnthropicTools(t *testing.T) {
 		validate    func(t *testing.T, tools []anthropic.ToolUnionParam, err error)
 	}{
 		{
-			name:        "empty_tool_refs_with_sonnet_4",
+			name:        "empty_tool_refs",
 			toolRefs:    []uuid.UUID{},
-			modelID:     "claude-sonnet-4",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				assert.NoError(t, err)
@@ -282,9 +248,9 @@ func TestFetchAnthropicTools(t *testing.T) {
 			},
 		},
 		{
-			name:        "nil_tool_refs_with_haiku",
+			name:        "nil_tool_refs",
 			toolRefs:    nil,
-			modelID:     "claude-3-haiku-20240307",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				assert.NoError(t, err)
@@ -292,9 +258,9 @@ func TestFetchAnthropicTools(t *testing.T) {
 			},
 		},
 		{
-			name:        "valid_uuid_not_in_db_with_sonnet_35",
+			name:        "valid_uuid_not_in_db",
 			toolRefs:    []uuid.UUID{uuid.MustParse("550e8400-e29b-41d4-a716-446655440000")},
-			modelID:     "claude-3-5-sonnet-20240620",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				// If there's a database connection error, skip the test
@@ -311,9 +277,9 @@ func TestFetchAnthropicTools(t *testing.T) {
 			},
 		},
 		{
-			name:        "real_tool_with_cache_supported_model",
+			name:        "real_tool_with_cache",
 			toolRefs:    []uuid.UUID{tool.ID},
-			modelID:     "claude-sonnet-4",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				// If there's a database connection error, the test should handle it gracefully
@@ -343,88 +309,14 @@ func TestFetchAnthropicTools(t *testing.T) {
 				assert.NotNil(t, tool.OfTool.InputSchema.Required)
 				assert.Contains(t, tool.OfTool.InputSchema.Required, "location")
 
-				// Validate cache control is set for cache-supported model
+				// Validate cache control is always set
 				assert.Equal(t, "ephemeral", string(tool.OfTool.CacheControl.Type))
 			},
 		},
 		{
-			name:        "real_tool_with_haiku_no_cache",
-			toolRefs:    []uuid.UUID{tool.ID},
-			modelID:     "claude-3-haiku-20240307",
-			expectError: false,
-			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
-				// If there's a database connection error, the test should handle it gracefully
-				if err != nil {
-					t.Skipf("Database connection failed: %v", err)
-					return
-				}
-				assert.NoError(t, err)
-				assert.NotNil(t, tools)
-
-				// Check if tools slice is empty due to database issues
-				if len(tools) == 0 {
-					t.Skip("No tools returned, likely due to database connection issues")
-					return
-				}
-
-				assert.Len(t, tools, 1)
-
-				// Validate the converted tool structure
-				tool := tools[0]
-				assert.NotNil(t, tool.OfTool)
-				assert.Equal(t, "test_tool_unit", tool.OfTool.Name)
-				assert.NotNil(t, tool.OfTool.Description)
-				assert.Equal(t, "Get the weather for a location", tool.OfTool.Description.Value)
-				assert.Equal(t, "object", string(tool.OfTool.InputSchema.Type))
-				assert.NotNil(t, tool.OfTool.InputSchema.Properties)
-				assert.NotNil(t, tool.OfTool.InputSchema.Required)
-				assert.Contains(t, tool.OfTool.InputSchema.Required, "location")
-
-				// Validate cache control is NOT set for haiku model
-				assert.Equal(t, "", string(tool.OfTool.CacheControl.Type))
-			},
-		},
-		{
-			name:        "real_tool_with_sonnet_35_no_cache",
-			toolRefs:    []uuid.UUID{tool.ID},
-			modelID:     "claude-3-5-sonnet-20240620",
-			expectError: false,
-			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
-				// If there's a database connection error, the test should handle it gracefully
-				if err != nil {
-					t.Skipf("Database connection failed: %v", err)
-					return
-				}
-				assert.NoError(t, err)
-				assert.NotNil(t, tools)
-
-				// Check if tools slice is empty due to database issues
-				if len(tools) == 0 {
-					t.Skip("No tools returned, likely due to database connection issues")
-					return
-				}
-
-				assert.Len(t, tools, 1)
-
-				// Validate the converted tool structure
-				tool := tools[0]
-				assert.NotNil(t, tool.OfTool)
-				assert.Equal(t, "test_tool_unit", tool.OfTool.Name)
-				assert.NotNil(t, tool.OfTool.Description)
-				assert.Equal(t, "Get the weather for a location", tool.OfTool.Description.Value)
-				assert.Equal(t, "object", string(tool.OfTool.InputSchema.Type))
-				assert.NotNil(t, tool.OfTool.InputSchema.Properties)
-				assert.NotNil(t, tool.OfTool.InputSchema.Required)
-				assert.Contains(t, tool.OfTool.InputSchema.Required, "location")
-
-				// Validate cache control is NOT set for sonnet 3.5 model
-				assert.Equal(t, "", string(tool.OfTool.CacheControl.Type))
-			},
-		},
-		{
-			name:        "multiple_valid_tools_some_not_in_db_with_opus",
+			name:        "multiple_valid_tools_some_not_in_db",
 			toolRefs:    []uuid.UUID{tool.ID, uuid.MustParse("550e8400-e29b-41d4-a716-446655440000")},
-			modelID:     "claude-opus-4",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				assert.NoError(t, err)
@@ -432,14 +324,14 @@ func TestFetchAnthropicTools(t *testing.T) {
 				// Should only return the valid tool that exists in DB
 				assert.Len(t, tools, 1)
 				assert.Equal(t, "test_tool_unit", tools[0].OfTool.Name)
-				// Validate cache control is set for opus model
+				// Validate cache control is always set
 				assert.Equal(t, "ephemeral", string(tools[0].OfTool.CacheControl.Type))
 			},
 		},
 		{
-			name:        "all_invalid_tool_ids_with_haiku",
+			name:        "all_invalid_tool_ids",
 			toolRefs:    []uuid.UUID{uuid.MustParse("00000000-0000-0000-0000-000000000001"), uuid.MustParse("00000000-0000-0000-0000-000000000002")},
-			modelID:     "claude-3-haiku-20240307",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				assert.NoError(t, err)
@@ -449,9 +341,9 @@ func TestFetchAnthropicTools(t *testing.T) {
 			},
 		},
 		{
-			name:        "mixed_valid_and_invalid_tool_ids_with_sonnet_35",
+			name:        "mixed_valid_and_invalid_tool_ids",
 			toolRefs:    []uuid.UUID{tool.ID, uuid.MustParse("00000000-0000-0000-0000-000000000001"), uuid.MustParse("00000000-0000-0000-0000-000000000002")},
-			modelID:     "claude-3-5-sonnet-20240620",
+			modelID:     testModelID,
 			expectError: false,
 			validate: func(t *testing.T, tools []anthropic.ToolUnionParam, err error) {
 				assert.NoError(t, err)
@@ -459,8 +351,8 @@ func TestFetchAnthropicTools(t *testing.T) {
 				// Should only return the valid tool that exists in DB
 				assert.Len(t, tools, 1)
 				assert.Equal(t, "test_tool_unit", tools[0].OfTool.Name)
-				// Validate cache control is NOT set for sonnet 3.5 model
-				assert.Equal(t, "", string(tools[0].OfTool.CacheControl.Type))
+				// Validate cache control is always set
+				assert.Equal(t, "ephemeral", string(tools[0].OfTool.CacheControl.Type))
 			},
 		},
 	}
@@ -587,7 +479,7 @@ func TestInvokeAnthropicModel(t *testing.T) {
 			spec: &AgentSpecs{
 				Model: ModelSpecs{
 					Provider:  "anthropic",
-					ModelID:   "anthropic.claude-3-haiku-20240307-v1:0",
+					ModelID:   testModelID,
 					MaxTokens: 1000,
 					Stream:    false,
 				},
@@ -607,7 +499,7 @@ func TestInvokeAnthropicModel(t *testing.T) {
 			spec: &AgentSpecs{
 				Model: ModelSpecs{
 					Provider:  "anthropic",
-					ModelID:   "apac.anthropic.claude-sonnet-4-20250514-v1:0",
+					ModelID:   testModelID,
 					MaxTokens: 4000,
 					Stream:    false,
 					Thinking: ThinkingSpecs{
@@ -631,7 +523,7 @@ func TestInvokeAnthropicModel(t *testing.T) {
 			spec: &AgentSpecs{
 				Model: ModelSpecs{
 					Provider:  "anthropic",
-					ModelID:   "anthropic.claude-3-haiku-20240307-v1:0",
+					ModelID:   testModelID,
 					MaxTokens: 1000,
 					Stream:    true,
 					Thinking: ThinkingSpecs{
@@ -655,7 +547,7 @@ func TestInvokeAnthropicModel(t *testing.T) {
 			spec: &AgentSpecs{
 				Model: ModelSpecs{
 					Provider:  "anthropic",
-					ModelID:   "apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
+					ModelID:   testModelID,
 					MaxTokens: 4000,
 					Stream:    true,
 					Thinking: ThinkingSpecs{
@@ -716,7 +608,7 @@ func TestStructuredOutputPrefillMessage(t *testing.T) {
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
 					Provider:  "anthropic",
-					ModelID:   "anthropic.claude-3-haiku-20240307-v1:0",
+					ModelID:   testModelID,
 					MaxTokens: 1000,
 					Stream:    false,
 					ResponseFormat: map[string]any{
@@ -747,7 +639,7 @@ func TestStructuredOutputPrefillMessage(t *testing.T) {
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
 					Provider:       "anthropic",
-					ModelID:        "anthropic.claude-3-haiku-20240307-v1:0",
+					ModelID:        testModelID,
 					MaxTokens:      1000,
 					Stream:         false,
 					ResponseFormat: nil,
@@ -769,7 +661,7 @@ func TestStructuredOutputPrefillMessage(t *testing.T) {
 				System: "You are a helpful assistant.",
 				Model: ModelSpecs{
 					Provider:       "anthropic",
-					ModelID:        "anthropic.claude-3-haiku-20240307-v1:0",
+					ModelID:        testModelID,
 					MaxTokens:      1000,
 					Stream:         false,
 					ResponseFormat: map[string]any{},
@@ -791,10 +683,7 @@ func TestStructuredOutputPrefillMessage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create the request parameters similar to how handleAnthropicRequest does it
 			params := anthropic.MessageNewParams{
-				Model:     anthropic.Model(tt.spec.Model.ModelID),
-				MaxTokens: tt.spec.Model.MaxTokens,
-				Messages:  tt.inputMessages,
-				System:    getSystemPrompt(tt.spec, []db.Agent{}),
+				Messages: tt.inputMessages,
 			}
 
 			// Apply the same logic as in handleAnthropicRequest for adding prefill

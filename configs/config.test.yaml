@@ -50,12 +50,9 @@ scheduler:
 #   type: s3
 #   bucket: flow-cache-bucket-test
 
-# LLM configuration for tests
-# Add your test API keys here or use GitHub Secrets
-# llm_config:
-#   bedrock:
-#     type: assume_role
-#     region: ap-southeast-1
-#     assume_role: "arn:aws:iam::ACCOUNT_ID:role/bedrock-test-role"
-#   google:
-#     api_key: ${GOOGLE_API_KEY}  # Will be replaced from environment variable
+llm_config:
+  bedrock:
+    type: default
+    region: ap-southeast-1
+  google:
+    api_key: ${GOOGLE_API_KEY}
