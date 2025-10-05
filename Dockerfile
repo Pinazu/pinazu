@@ -8,11 +8,20 @@ RUN npm ci && \
     npm run build
 
 # Build Go application
-FROM golang:1.23-alpine AS build
+FROM golang:1.25-alpine AS build
 
 WORKDIR /home/apps
 
-COPY . .
+COPY ./api .
+COPY ./cli .
+COPY ./configs .
+COPY ./internal .
+COPY ./sql .
+COPY ./scripts .
+COPY ./sqlc.yaml .
+COPY ./oapi-codegen.yaml .
+COPY go.mod .
+COPY go.sum .
 
 RUN go mod tidy && \
     go run ./scripts/build-openapi.go && \
