@@ -10,10 +10,14 @@ RUN npm ci && \
 # Build Go application
 FROM golang:1.25-alpine AS build
 
+# Install git which is required by go mod
+RUN apk add --no-cache git
+
 WORKDIR /home/apps
 
 COPY ./api .
 COPY ./cli .
+COPY ./cmd .
 COPY ./configs .
 COPY ./internal .
 COPY ./sql .
