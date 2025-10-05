@@ -6,9 +6,9 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
+	"github.com/pinazu/internal/service"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
 )
 
 func TestGetBedrockSystemPrompt(t *testing.T) {
@@ -318,7 +318,7 @@ func TestBedrockStructuredOutputPrefillMessageAdvanced(t *testing.T) {
 				require.NotEmpty(t, lastMsg.Content, "Prefill message should have content")
 
 				// Verify it's a text block with "{"
-				textBlock := lastMsg.Content[0].OfText  
+				textBlock := lastMsg.Content[0].OfText
 				require.NotNil(t, textBlock, "Prefill message should be a text block")
 				assert.Equal(t, tt.expectedText, textBlock.Text, "Prefill message should contain '{'")
 			} else {

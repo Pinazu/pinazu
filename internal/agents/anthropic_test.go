@@ -14,11 +14,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	pq_compat "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 	"github.com/pressly/goose/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
 )
 
 // Common test setup for database queries

@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 	"github.com/google/uuid"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 )
 
 // handleBedrockRequest handles requests for Bedrock models

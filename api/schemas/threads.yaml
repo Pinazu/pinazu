@@ -2,7 +2,7 @@ Thread:
   type: object
   x-go-type: db.Thread
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:

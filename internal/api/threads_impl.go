@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	db "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+	db "github.com/pinazu/internal/db"
 )
 
 const THREAD_RESOURCE = "Thread"

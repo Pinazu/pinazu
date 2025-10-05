@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/anthropics/anthropic-sdk-go"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 )
 
 // StreamEvent interface for stream events that can be used with Service Message Generic type

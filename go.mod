@@ -1,4 +1,4 @@
-module gitlab.kalliopedata.io/genai-apps/pinazu-core
+module github.com/pinazu
 
 go 1.25
 

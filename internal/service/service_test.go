@@ -13,9 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nuid"
+	"github.com/pinazu/internal/telemetry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/telemetry"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -552,7 +552,7 @@ func (s *ServiceTestSuite) TestMockService_Stats() {
 		started: time.Now().UTC(),
 		stats: func() map[string]*SubscriptionStats {
 			stats := make(map[string]*SubscriptionStats)
-			
+
 			stat1 := &SubscriptionStats{
 				SubscriptionStatsBase: SubscriptionStatsBase{
 					Subject:   "test.subject1",
@@ -562,7 +562,7 @@ func (s *ServiceTestSuite) TestMockService_Stats() {
 			stat1.NumMessages.Store(10)
 			stat1.NumErrors.Store(1)
 			stats["test.subject1"] = stat1
-			
+
 			stat2 := &SubscriptionStats{
 				SubscriptionStatsBase: SubscriptionStatsBase{
 					Subject:   "test.subject2",
@@ -572,7 +572,7 @@ func (s *ServiceTestSuite) TestMockService_Stats() {
 			stat2.NumMessages.Store(5)
 			stat2.NumErrors.Store(0)
 			stats["test.subject2"] = stat2
-			
+
 			return stats
 		}(),
 	}

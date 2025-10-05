@@ -7,8 +7,8 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 	"google.golang.org/genai"
 )
 
@@ -69,7 +69,7 @@ func (as *AgentService) handleGeminiRequest(m []anthropic.MessageParam, spec *Ag
 			totalParts += len(cp.Parts)
 		}
 	}
-	
+
 	if totalParts == 0 {
 		as.log.Error("❌ GEMINI ERROR: No content parts found in messages - this will cause empty input API error")
 		return nil, "", fmt.Errorf("empty input: no content parts found in messages")
@@ -80,7 +80,7 @@ func (as *AgentService) handleGeminiRequest(m []anthropic.MessageParam, spec *Ag
 
 		for chunk, err := range stream {
 			if err != nil {
-				as.log.Error("Error streaming response from Gemini", 
+				as.log.Error("Error streaming response from Gemini",
 					"error", err,
 					"error_type", fmt.Sprintf("%T", err))
 				return nil, "", err
@@ -203,7 +203,7 @@ func (as *AgentService) handleGeminiRequest(m []anthropic.MessageParam, spec *Ag
 		stop = "stop_sequence"
 	case genai.FinishReasonBlocklist:
 		as.log.Info("Gemini Agent stopped with BLOCKLIST")
-		stop = "stop_sequence"  
+		stop = "stop_sequence"
 	case genai.FinishReasonProhibitedContent:
 		as.log.Info("Gemini Agent stopped with PROHIBITED_CONTENT")
 		stop = "stop_sequence"
@@ -401,7 +401,7 @@ func convertGeminiStreamChunkToAnthropic(chunk *genai.GenerateContentResponse, s
 			for partIndex, part := range candidate.Content.Parts {
 				if part.Text != "" {
 					index := int64(partIndex)
-					
+
 					// Inject synthetic content_block_start if not already sent
 					if !state[index] {
 						syntheticStart := &anthropic.MessageStreamEventUnion{
@@ -412,24 +412,24 @@ func convertGeminiStreamChunkToAnthropic(chunk *genai.GenerateContentResponse, s
 						state[index] = true // Mark as sent
 					}
 
-			// Create delta event for the text chunk
-			deltaEvent := &anthropic.MessageStreamEventUnion{
-				Type:  "content_block_delta",
-				Index: index,
-			}
-			
-			// Check if this is thinking content or regular text
-			if part.Thought {
-				// This is thinking content
-				deltaEvent.Delta.Type = "thinking_delta"
-				deltaEvent.Delta.Thinking = part.Text
-			} else {
-				// This is regular text content
-				deltaEvent.Delta.Type = "text_delta"
-				deltaEvent.Delta.Text = part.Text
-			}
-			
-			events = append(events, deltaEvent)
+					// Create delta event for the text chunk
+					deltaEvent := &anthropic.MessageStreamEventUnion{
+						Type:  "content_block_delta",
+						Index: index,
+					}
+
+					// Check if this is thinking content or regular text
+					if part.Thought {
+						// This is thinking content
+						deltaEvent.Delta.Type = "thinking_delta"
+						deltaEvent.Delta.Thinking = part.Text
+					} else {
+						// This is regular text content
+						deltaEvent.Delta.Type = "text_delta"
+						deltaEvent.Delta.Text = part.Text
+					}
+
+					events = append(events, deltaEvent)
 				}
 			}
 		}

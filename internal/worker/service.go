@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/nats-io/nats.go/jetstream"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/service"
 )
 
 type WorkerService struct {

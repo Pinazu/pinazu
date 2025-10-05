@@ -2,7 +2,7 @@ Permission:
   type: object
   x-go-type: db.Permission
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -25,7 +25,7 @@ Permission:
       description: Permission content in JSON format
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     created_at:
       type: string
@@ -63,7 +63,7 @@ CreatePermissionRequest:
       description: Permission content in JSON format
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
   required:
     - name
@@ -86,7 +86,7 @@ UpdatePermissionRequest:
       description: Permission content in JSON format
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
 
 PermissionList:

@@ -10,7 +10,7 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/google/uuid"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+	"github.com/pinazu/internal/db"
 )
 
 const (

@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
 )
 
 const (

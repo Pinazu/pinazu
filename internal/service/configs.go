@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/pinazu/internal/logger"
+	"github.com/pinazu/internal/telemetry"
 	"github.com/urfave/cli/v3"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/logger"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/telemetry"
 	"gopkg.in/yaml.v3"
 )
 

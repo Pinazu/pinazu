@@ -9,7 +9,7 @@ events:
         import: "github.com/google/uuid"
       - name: Status
         type: db.FlowStatus
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
       - name: EventTimestamp
         type: time.Time
         import: "time"
@@ -41,7 +41,7 @@ events:
         description: Name of the task that is being executed
       - name: Status
         type: db.FlowStatus
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
       - name: ResultCacheKey
         type: "*string"
         description: Cache key for the result of the task run, used for retry scenarios
@@ -140,4 +140,4 @@ events:
     responseFields:
       - name: FlowRun 
         type: db.FlowRun
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"

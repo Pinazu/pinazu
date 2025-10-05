@@ -2,7 +2,7 @@ Tool:
   type: object
   x-go-type: db.Tool
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -61,7 +61,7 @@ StandaloneTool:
       enum: ['standalone']
       x-go-type: db.ToolType
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     params:
       type: object
@@ -90,7 +90,7 @@ WorkflowTool:
       enum: ['workflow']
       x-go-type: db.ToolType
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     params:
       type: object
@@ -116,7 +116,7 @@ MCPTool:
       enum: ['mcp']
       x-go-type: db.ToolType
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     entrypoint:
       type: string
@@ -128,7 +128,7 @@ MCPTool:
       enum: ['stdio','grpc', 'sse']
       x-go-type: db.MCPProtocol
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     env_vars:
       type: object
@@ -161,7 +161,7 @@ CreateToolRequest:
       type: object
       x-go-type: db.ToolConfig
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
       oneOf:
         - $ref: '#/components/schemas/StandaloneTool'
@@ -185,7 +185,7 @@ UpdateToolRequest:
       type: object
       x-go-type: db.ToolConfig
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
       oneOf:
         - $ref: '#/components/schemas/StandaloneTool'

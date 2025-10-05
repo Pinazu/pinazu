@@ -2,7 +2,7 @@ Task:
   type: object
   x-go-type: db.Task
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -24,7 +24,7 @@ Task:
       description: Additional information related to the task
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     parent_task_id:
       type: string
@@ -64,7 +64,7 @@ TaskRun:
   type: object
   x-go-type: db.TasksRun
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     task_run_id:
@@ -145,7 +145,7 @@ CreateTaskRequest:
       description: Additional information related to the task
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
   required:
     - thread_id
@@ -162,7 +162,7 @@ UpdateTaskRequest:
       description: Additional information related to the task
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
 
 ExecuteTaskRequest:

@@ -2,7 +2,7 @@ Role:
   type: object
   x-go-type: db.Role
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -122,7 +122,7 @@ RolePermissionMapping:
   type: object
   x-go-type: db.RolePermissionMapping
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     mapping_id:

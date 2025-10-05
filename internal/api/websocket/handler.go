@@ -13,9 +13,9 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/utils"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
+	"github.com/pinazu/internal/utils"
 )
 
 type (

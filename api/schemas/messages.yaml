@@ -2,7 +2,7 @@ Message:
   type: object
   x-go-type: db.ThreadMessage
   x-go-type-import:
-    path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+    path: github.com/pinazu/internal/db
     name: db
   properties:
     id:
@@ -22,20 +22,20 @@ Message:
       description: JSON message content
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     sender_type:
       type: string
       x-go-type: db.SenderMessageType
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     result_type:
       type: string
       nullable: true
       x-go-type: "*db.ResultMessageType"
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     stop_reason:
       type: string
@@ -68,7 +68,7 @@ Message:
       description: JSON citations data
       x-go-type: "[]db.JsonRaw"
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     recipient_id:
       type: string
@@ -94,7 +94,7 @@ CreateMessageRequest:
       description: JSON message content
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
     sender_id:
       type: string
@@ -121,7 +121,7 @@ UpdateMessageRequest:
       description: JSON message content
       x-go-type: db.JsonRaw
       x-go-type-import:
-        path: gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db
+        path: github.com/pinazu/internal/db
         name: db
   required:
     - message

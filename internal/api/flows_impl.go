@@ -8,9 +8,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/utils"
+	"github.com/pinazu/internal/db"
+	"github.com/pinazu/internal/service"
+	"github.com/pinazu/internal/utils"
 )
 
 const FLOW_RESOURCE = "Flow"

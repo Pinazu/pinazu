@@ -9,7 +9,7 @@ events:
         import: "github.com/google/uuid"
       - name: Messages
         type: "[]db.JsonRaw"
-        import: "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+        import: "github.com/pinazu/internal/db"
         description: Array of JSON-encoded messages for the task
       - name: RecipientId
         type: uuid.UUID

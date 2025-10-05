@@ -1,6 +1,6 @@
 package tools
 
-import "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/service"
+import "github.com/pinazu/internal/service"
 
 // executeMCPTool publish tool execute event to MCP server
 func (ts *ToolService) executeMCPTool(mcpToolsToExecute []service.StandaloneToolRequestEventMessage) {

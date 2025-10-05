@@ -12,9 +12,9 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
-	custom_middleware "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/api/middleware"
-	"gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/api/websocket"
-	db "gitlab.kalliopedata.io/genai-apps/pinazu-core/internal/db"
+	custom_middleware "github.com/pinazu/internal/api/middleware"
+	"github.com/pinazu/internal/api/websocket"
+	db "github.com/pinazu/internal/db"
 )
 
 type Server struct {
